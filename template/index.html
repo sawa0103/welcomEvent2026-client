@@ -61,7 +61,7 @@
     const instructionScreen = document.getElementById("instruction-screen");
     const gameScreen = document.getElementById("game-screen");
 
-    //説明文を出すもの
+    //説明文を出すもの(サーバーから呼び出される)
     function instruction() {
         startScreen.style.display = "none";
         instructionScreen.style.display = "flex";
@@ -72,7 +72,7 @@
         console.log("[Game] 説明画面を表示");
     }
 
-    //ゲームを開始するもの
+    //ゲームを開始するもの(サーバーから呼び出される)
     function gameStart() {
         // 画面切り替え
         startScreen.style.display = "none";
@@ -81,16 +81,15 @@
 
 
         console.log("[Game] ゲーム開始！");
-
     }
-    //ゲームを停止するもの
+    //ゲームを停止するもの(サーバーから呼び出される)
     function gameStop() {
         // ここに得点計算をするコードを！
 
 
 
 
-
+        //得点を返す 最大100点だよ！ 浮動小数点も対応だよ！
         return Math.min(points, 100);
     }
 </script>
