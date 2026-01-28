@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ミニゲーム-例</title>
+    <style>
+        body {
+            /* 背景の色を指定(もし画像が読み込まれなかったら時を想定するため) */
+            background-color: #f0f0f0;
+            /* 背景画像を指定 良いのがあれば好きなものを使っていいよ！！*/
+            background-image: url("./data/background.png");
+            /* 背景画像を覆うように指定 */
+            background-size: cover;
+            /* 背景画像を中央に配置するように指定 */
+            background-position: center;
+            /* 背景画像を繰り返さないように指定 */
+            background-repeat: no-repeat;
+            /* 子要素を画面中央に配置するようにする。 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 要素の大きさを指定する */
+            width: 100vw;
+            height: 100vh;
+            /* はみ出たものを非表示にする (なんか要素が見えないときはこれをvisiableにすると良いかも)*/
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 開始画面 最初は表示する-->
+    <div id="start-screen" class="screen">
+        <!-- ここにコードを！ -->
+
+
+    </div>
+    <!-- 説明画面 最初は非表示-->
+    <div id="instruction-screen" class="screen" style="display: none;">
+        <!-- ここにコードを！ -->
+
+
+    </div>
+    <!-- ゲーム画面 最初は非表示-->
+    <div id="game-screen" class="screen" style="display: none;">
+        <!-- ここにコードを！ -->
+
+
+    </div>
+</body>
+
+<style>
+    /* ここに自分のスタイルを！ */
+</style>
+
+<script>
+    //各要素のIDを取得して操作をできるようにする。
+    const startScreen = document.getElementById("start-screen");
+    const instructionScreen = document.getElementById("instruction-screen");
+    const gameScreen = document.getElementById("game-screen");
+
+    //説明文を出すもの
+    function instruction() {
+        startScreen.style.display = "none";
+        instructionScreen.style.display = "flex";
+        gameScreen.style.display = "none";
+
+
+
+        console.log("[Game] 説明画面を表示");
+    }
+
+    //ゲームを開始するもの
+    function gameStart() {
+        // 画面切り替え
+        startScreen.style.display = "none";
+        instructionScreen.style.display = "none";
+        gameScreen.style.display = "flex";
+
+
+        console.log("[Game] ゲーム開始！");
+
+    }
+    //ゲームを停止するもの
+    function gameStop() {
+        // ここに得点計算をするコードを！
+
+
+
+
+
+        return Math.min(points, 100);
+    }
+</script>
+<!-- サーバーとの通信用 -->
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<!-- いろいろな設定用 -->
+<script src="https://we2026_statics.sawayuki.com/control.js" defer></script>
+
+</html>
