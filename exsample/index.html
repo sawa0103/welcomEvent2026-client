@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ミニゲーム-例</title>
+    <style>
+        body {
+            /* 背景の色を指定(もし画像が読み込まれなかったら時を想定するため) */
+            background-color: #f0f0f0;
+            /* 背景画像を指定 */
+            background-image: url("./data/background.png");
+            /* 背景画像を覆うように指定 */
+            background-size: cover;
+            /* 背景画像を中央に配置するように指定 */
+            background-position: center;
+            /* 背景画像を繰り返さないように指定 */
+            background-repeat: no-repeat;
+            /* 子要素を画面中央に配置するようにする。 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 要素の大きさを指定する */
+            width: 100vw;
+            height: 100vh;
+            /* はみ出たものを非表示にする (なんか要素が見えないときはこれをvisiableにすると良いかも)*/
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 開始画面 最初は表示する-->
+    <div id="start-screen" class="screen">
+        <div class="card">
+            <h1>🖱️ クリックチャレンジ</h1>
+            <p>10秒間でどれだけクリックできるか挑戦しよう！</p>
+        </div>
+    </div>
+    <!-- 説明画面 最初は非表示-->
+    <div id="instruction-screen" class="screen" style="display: none;">
+        <div class="card">
+            <h2>遊び方</h2>
+            <div class="instruction-list">
+                <p>1️⃣ ゲームが始まったら、画面中央のボタンを連打！</p>
+                <!-- ゲームは30秒で終わる -->
+                <p>2️⃣ 制限時間は <strong>30秒</strong> です</p>
+                <p>3️⃣ クリック回数に応じて得点が決まります</p>
+                <div class="score-table">
+                    <p>🥇 100クリック以上 → 100点</p>
+                    <p>🥈 80クリック以上 → 80点</p>
+                    <p>🥉 50クリック以上 → 50点</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ゲーム画面 最初は非表示-->
+    <div id="game-screen" class="screen" style="display: none;">
+        <div class="game-container">
+            <button id="click-button">
+                <span id="click-count">0</span>
+                <small>クリック！</small>
+            </button>
+        </div>
+    </div>
+</body>
+
+<style>
+    /* ココらへんはお好みで */
+    .screen {
+        text-align: center;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 40px 60px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        max-width: 500px;
+    }
+
+    .card h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .card h2 {
+        font-size: 2em;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .card p {
+        font-size: 1.2em;
+        color: #555;
+        margin: 10px 0;
+    }
+
+    .hint {
+        font-size: 0.9em !important;
+        color: #888 !important;
+        margin-top: 20px !important;
+    }
+
+    .instruction-list {
+        text-align: left;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin: 20px 0;
+    }
+
+    .instruction-list p {
+        margin: 15px 0;
+    }
+
+    .score-table {
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 15px;
+    }
+
+    .score-table p {
+        font-size: 1em !important;
+        margin: 8px 0 !important;
+    }
+
+    .game-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .timer-display {
+        font-size: 2em;
+        font-weight: bold;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        background: rgba(0, 0, 0, 0.5);
+        padding: 15px 30px;
+        border-radius: 15px;
+    }
+
+    #timer {
+        color: #ffeb3b;
+        font-size: 1.2em;
+    }
+
+    #click-button {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: none;
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        font-size: 1.5em;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 10px 30px rgba(17, 153, 142, 0.4);
+        transition: transform 0.1s, box-shadow 0.1s;
+        user-select: none;
+    }
+
+    #click-button:hover {
+        transform: scale(1.05);
+    }
+
+    #click-button:active {
+        transform: scale(0.95);
+        box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4);
+    }
+
+    #click-count {
+        font-size: 3em;
+        font-weight: bold;
+    }
+
+    #click-button small {
+        font-size: 0.8em;
+        opacity: 0.9;
+    }
+
+    .progress-bar {
+        width: 300px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    #progress-fill {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+        transition: width 0.1s linear;
+    }
+</style>
+
+<script>
+    //各要素のIDを取得して操作をできるようにする。
+    const startScreen = document.getElementById("start-screen");
+    const instructionScreen = document.getElementById("instruction-screen");
+    const gameScreen = document.getElementById("game-screen");
+
+    //ゲーム関連の要素
+    const clickButton = document.getElementById("click-button");
+    const clickCountDisplay = document.getElementById("click-count");
+
+
+    //得点計算用 最大100点
+    let points = 0;
+    let clickCount = 0;
+    let isGameRunning = false;
+
+    //説明文を出すもの
+    function instruction() {
+        startScreen.style.display = "none";
+        instructionScreen.style.display = "flex";
+        gameScreen.style.display = "none";
+        console.log("[Game] 説明画面を表示");
+    }
+
+    //ゲームを開始するもの
+    function gameStart() {
+        // 画面切り替え
+        startScreen.style.display = "none";
+        instructionScreen.style.display = "none";
+        gameScreen.style.display = "flex";
+
+        // ゲーム状態リセット
+        clickCount = 0;
+        isGameRunning = true;
+
+        // 表示リセット
+        clickCountDisplay.textContent = "0";
+        clickButton.disabled = false;
+
+        console.log("[Game] ゲーム開始！");
+
+    }
+
+    // クリックボタンのイベント
+    clickButton.addEventListener("click", () => {
+        if (isGameRunning) {
+            clickCount++;
+            clickCountDisplay.textContent = clickCount;
+
+            // ボタンの色を少し変える演出
+            clickButton.style.background = `linear-gradient(135deg, hsl(${170 + clickCount % 30}, 80%, 40%) 0%, hsl(${140 + clickCount % 30}, 80%, 60%) 100%)`;
+        }
+    });
+
+    // ゲーム終了処理
+    function endGame() {
+        isGameRunning = false;
+        clickButton.disabled = true;
+
+        // スコア計算
+        if (clickCount >= 100) {
+            points = 100;
+        } else if (clickCount >= 80) {
+            points = 80;
+        } else if (clickCount >= 50) {
+            points = 50;
+        } else {
+            points = Math.floor(clickCount / 2);
+        }
+
+        console.log(`[Game] ゲーム終了！ クリック数: ${clickCount}, スコア: ${points}`);
+    }
+
+    //ゲームを停止するもの
+    function gameStop() {
+        if (isGameRunning) {
+            endGame();
+        }
+        return Math.min(points, 100);
+    }
+</script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="https://we2026_statics.sawayuki.com/control.js" defer></script>
+
+</html>
