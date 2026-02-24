@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ミニゲーム-例</title>
+    <style>
+        body {
+            /* 背景の色を指定(もし画像が読み込まれなかったら時を想定するため) */
+            background-color: #f0f0f0;
+            /* 背景画像を指定 良いのがあれば好きなものを使っていいよ！！*/
+            background-image: url("./data/background.png");
+            /* 背景画像を覆うように指定 */
+            background-size: cover;
+            /* 背景画像を中央に配置するように指定 */
+            background-position: center;
+            /* 背景画像を繰り返さないように指定 */
+            background-repeat: no-repeat;
+            /* 子要素を画面中央に配置するようにする。 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 要素の大きさを指定する */
+            width: 100vw;
+            height: 100vh;
+            /* はみ出たものを非表示にする (なんか要素が見えないときはこれをvisiableにすると良いかも)*/
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 開始画面 最初は表示する-->
+    <div id="start-screen" class="screen">
+       <div class="quiz-start-container">
+    <h1 class="quiz-title">4択クイズチャレンジ！</h1>
+    <p class="quiz-subtitle">マスに止まったのでクイズに挑戦！</p>
+
+    <div class="quiz-start-info">
+        <p>サーバーから開始の合図が来るとクイズが始まります。</p>
+        <p>準備して待っていてください。</p>
+    </div>
+
+    <div class="quiz-waiting-icon">🎲</div>
+</div>
+
+
+    </div>
+    <!-- 説明画面 最初は非表示-->
+    <div id="instruction-screen" class="screen" style="display: none;">
+        <div class="instruction-container">
+    <h1 class="instruction-title">大同大学4択クイズ！！</h1>
+
+    <p class="instruction-text">
+        これから大同大学に関するクイズを4択で出題します。<br>
+        みんなで相談して答えてみよう！
+    </p>
+
+    <button id="quiz-start-button" class="instruction-start-button">
+        クイズを始める
+    </button>
+</div>
+
+
+    </div>
+
+        <!-- ゲーム画面 最初は非表示-->
+    <div id="game-screen" class="screen" style="display: none;">
+
+    
+        <div class="quiz-content">
+
+        <div id="judge-mark"></div>
+        <div id="correct-text"></div>
+
+        <div class="quiz-question-number" id="question-number"></div>
+
+        <h2 class="quiz-question"></h2>
+
+        <ul class="quiz-answer"></ul>
+
+        <button id="next-button">次の問題へ</button>
+
+    </div>
+
+    <!-- 結果オーバーレイ -->
+    <div id="result-overlay">
+        <div class="result-box">
+            <h2>結果発表</h2>
+            <p id="result-score"></p>
+            <p id="result-message"></p>
+        </div>
+    </div>
+    
+
+</div>
+
+</body>
+
+<style>
+/* ===== クイズUI ===== */
+
+.quiz-content {
+    border: 1px solid #222;
+    background-color: rgba(255, 245, 230, 0.85);
+    position: relative;
+    padding: 40px 20px 150px;
+    width: 80vw;
+    max-width: 900px;
+    border-radius: 12px;
+}
+
+.quiz-question-number {
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    border-bottom: 1px solid #222;
+    padding: 20px;
+}
+
+.quiz-question {
+    font-size: clamp(18px, 3vw, 32px);
+    font-weight: bold;
+    line-height: 1.8;
+    margin: 40px 0;
+    text-align: center;
+}
+
+.quiz-answer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.quiz-answer li {
+    list-style: none;
+    position: relative;
+}
+
+.quiz-answer li button {
+    color: #222;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    width: 100%;
+    padding-left: 80px;
+    font-weight: bold;
+    font-size: clamp(14px, 1.5vw, 20px);
+    border: 1px solid #000;
+    border-radius: 4px;
+    background-color: #fff;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.quiz-answer li button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.quiz-answer li button.correct {
+    background-color: green;
+    color: white;
+}
+
+.quiz-answer li button.wrong {
+    background-color: red;
+    color: white;
+}
+
+.quiz-answer li button.clicked {
+    outline: 4px solid #444;
+}
+
+.quiz-answer li::after {
+    position: absolute;
+    text-align: center;
+    font-size: clamp(14px, 1.5vw, 20px);
+    font-weight: bold;
+    content: "";
+    width: 60px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    border-right: 1px solid #000;
+}
+
+.quiz-answer li:nth-child(1)::after { content: "A"; }
+.quiz-answer li:nth-child(2)::after { content: "B"; }
+.quiz-answer li:nth-child(3)::after { content: "C"; }
+.quiz-answer li:nth-child(4)::after { content: "D"; }
+
+/* ===== 開始画面のサイコロ（大きく & アニメーション復活） ===== */
+
+.quiz-waiting-icon {
+    font-size: 140px; /* ← ここで大きさ調整（元80px → 140px） */
+    display: inline-block;
+    animation: bounce 1.2s infinite ease-in-out;
+}
+
+/* ふわっと跳ねるアニメーション */
+@keyframes bounce {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-20px); }
+    100% { transform: translateY(0); }
+}
+
+/* ===== 開始画面デザイン ===== */
+
+#start-screen {
+    background-image: url("./background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+}
+
+.quiz-start-container {
+    text-align: center;
+    color: #fff;
+    text-shadow: 2px 2px 4px #000;
+    padding: 20px;
+}
+
+.quiz-title {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.quiz-subtitle {
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.quiz-start-info {
+    font-size: 20px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+/* ===== 説明画面デザイン ===== */
+
+#instruction-screen {
+    background-image: url("./background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+}
+
+.instruction-container {
+    text-align: center;
+    color: #fff;
+    text-shadow: 2px 2px 4px #000;
+    padding: 20px;
+}
+
+.instruction-title {
+    font-size: 42px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.instruction-text {
+    font-size: 24px;
+    line-height: 1.8;
+    margin-bottom: 40px;
+}
+
+.instruction-start-button {
+    padding: 14px 30px;
+    font-size: 24px;
+    font-weight: bold;
+    border: 2px solid #fff;
+    background-color: rgba(0,0,0,0.4);
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.instruction-start-button:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+/* 〇 × */
+#judge-mark {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 120px;
+    font-weight: bold;
+    display: none;
+    z-index: 10;
+}
+
+/* 正解の文字 */
+#correct-text {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    display: none;
+}
+
+/* 次の問題へ */
+#next-button {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    padding: 12px 20px;
+    font-size: 18px;
+    border: 1px solid #000;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+/* ===== 結果オーバーレイ ===== */
+#result-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+}
+
+.result-box {
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    width: 80%;
+    max-width: 400px;
+}
+
+#retry-button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    font-size: 18px;
+}
+
+#game-screen {
+    background-image: url("./background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+}
+</style>
+
+<script>
+    //各要素のIDを取得して操作をできるようにする。
+    const startScreen = document.getElementById("start-screen");
+    const instructionScreen = document.getElementById("instruction-screen");
+    const gameScreen = document.getElementById("game-screen");
+
+    //説明文を出すもの(サーバーから呼び出される)
+    function instruction() {
+        startScreen.style.display = "none";
+        instructionScreen.style.display = "flex";
+        gameScreen.style.display = "none";
+
+
+
+        console.log("[Game] 説明画面を表示");
+    }
+
+    //ゲームを開始するもの(サーバーから呼び出される)
+    function gameStart() {
+        // 画面切り替え
+        startScreen.style.display = "none";
+        instructionScreen.style.display = "none";
+        gameScreen.style.display = "flex";
+
+
+        console.log("[Game] ゲーム開始！");
+        
+    }
+    //ゲームを停止するもの(サーバーから呼び出される)
+
+    // 説明画面の「クイズを始める」ボタン
+document.getElementById("quiz-start-button").addEventListener("click", () => {
+    // サーバー制御の gameStart() を呼ぶだけ
+    gameStart();
+});
+
+   /* ============================
+      4択クイズ本体（サーバ制御対応）
+============================ */
+
+let currentQuestion = 0;
+let correctCount = 0;
+let correctIndex = null;
+let correctAnswerText = "";
+let quizFinished = false;
+
+// ★ 問題データ（ここに追加するだけでOK）
+let quizData = [
+    {
+        question: "大学の最寄り駅は？",
+        answers: ["大同町", "大同前", "大同街", "大同駅"],
+        correct: 0
+    },
+    {
+        question: "大学の創立年は？",
+        answers: ["1960年", "1976年", "1983年", "1999年"],
+        correct: 1
+    },
+    {
+        question: "大学内のコンビニの名前は",
+        answers: ["ローソン", "セブンイレブン", "丸善", "ファミリーマート"],
+        correct: 2
+    },
+    {
+        question: "大同大学で一番階層が高い棟は？",
+        answers: ["A棟", "B棟", "X棟", "石井記念体育館"],
+        correct: 0
+    }
+];
+
+// ★ Fisher–Yates シャッフル
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+/* ---------------------------------
+   ★ gameStart() が呼ばれたらクイズ開始
+---------------------------------- */
+const originalGameStart = gameStart;
+gameStart = function () {
+    originalGameStart();
+
+    quizData = shuffle(quizData);
+    currentQuestion = 0;
+    correctCount = 0;
+    quizFinished = false;
+
+    quiz_start(currentQuestion);
+};
+
+/* ---------------------------------
+   問題開始
+---------------------------------- */
+function quiz_start(index) {
+    const data = quizData[index];
+
+    document.getElementById("question-number").textContent = `問題 ${index + 1}`;
+    document.querySelector(".quiz-question").textContent = data.question;
+
+    const answersEl = document.querySelector(".quiz-answer");
+    answersEl.innerHTML = "";
+
+    correctIndex = data.correct;
+    correctAnswerText = data.answers[data.correct];
+
+    document.getElementById("judge-mark").style.display = "none";
+    document.getElementById("correct-text").style.display = "none";
+
+    const nextBtn = document.getElementById("next-button");
+    nextBtn.textContent = (index === quizData.length - 1)
+        ? "結果を見る"
+        : "次の問題へ";
+
+    data.answers.forEach((answer, i) => {
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.classList.add("quiz-button");
+        btn.textContent = answer;
+
+        btn.addEventListener("click", () => {
+            TimeUp(i, btn);
+        });
+
+        li.appendChild(btn);
+        answersEl.appendChild(li);
+    });
+}
+
+/* ---------------------------------
+   正誤判定
+---------------------------------- */
+function TimeUp(selectedIndex, clickedBtn) {
+    const buttons = document.querySelectorAll(".quiz-button");
+    const judgeMark = document.getElementById("judge-mark");
+    const correctText = document.getElementById("correct-text");
+
+    clickedBtn.classList.add("clicked");
+    buttons.forEach(btn => btn.disabled = true);
+
+    if (selectedIndex === correctIndex) {
+        judgeMark.textContent = "〇";
+        judgeMark.style.color = "green";
+        clickedBtn.classList.add("correct");
+        correctCount++;
+    } else {
+        judgeMark.textContent = "×";
+        judgeMark.style.color = "red";
+        clickedBtn.classList.add("wrong");
+    }
+
+    judgeMark.style.display = "block";
+    correctText.textContent = "正解：" + correctAnswerText;
+    correctText.style.display = "block";
+}
+
+/* ---------------------------------
+   結果オーバーレイ
+---------------------------------- */
+function showResult() {
+    quizFinished = true;
+
+    const total = quizData.length;
+    const score = correctCount;
+    const rate = score / total;
+
+    let message = "";
+    if (rate === 1) message = "完璧！大学の事良く分かってるね！";
+    else if (rate >= 0.5) message = "いいね！あと少しで高得点！";
+    else message = "これから知っていこう！";
+
+    document.getElementById("result-score").textContent = `${score} / ${total}`;
+    document.getElementById("result-message").textContent = message;
+
+    document.getElementById("result-overlay").style.display = "flex";
+}
+
+/* ---------------------------------
+   次の問題へ / 結果を見る
+---------------------------------- */
+document.getElementById("next-button").addEventListener("click", () => {
+    if (currentQuestion < quizData.length - 1) {
+        currentQuestion++;
+        quiz_start(currentQuestion);
+    } else {
+        showResult();
+    }
+});
+
+/* ---------------------------------
+   ★ gameStop() が呼ばれたら点数を返す
+---------------------------------- */
+const originalGameStop = gameStop;
+gameStop = function () {
+
+    // 結果がまだ表示されていない場合は表示
+    if (!quizFinished) {
+        showResult();
+    }
+
+    // 点数を 0〜100 に変換
+    const total = quizData.length;
+    const scoreRate = correctCount / total;
+    const points = Math.round(scoreRate * 100);
+
+    // 画面を開始画面に戻す（ルール通り）
+    startScreen.style.display = "flex";
+    instructionScreen.style.display = "none";
+    gameScreen.style.display = "none";
+
+    return Math.min(points, 100);
+};
+
+
+    function gameStop() {
+        points = Math.round(100 * (correctCount / quizData.length));
+
+
+
+
+        //得点を返す 最大100点だよ！ 浮動小数点も対応だよ！
+        return Math.min(points, 100);
+    }
+
+    /* ============================
+   ★ 開発用：VSCode単体で自動起動
+   （本番ではコメントアウトする）
+============================ */
+
+// ページ読み込み後に自動で説明画面 → ゲーム開始
+window.addEventListener("DOMContentLoaded", () => {
+    console.log("[DEV] VSCode単体モード：自動でゲーム開始します");
+
+    // 説明画面を表示
+    instruction();
+
+    // 少し待ってからゲーム開始（UIが切り替わる時間を確保）
+    setTimeout(() => {
+        gameStart();
+    }, 500);
+});
+
+
+</script>
+<!-- サーバーとの通信用 -->
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<!-- いろいろな設定用 -->
+<script src="https://we2026_statics.sawayuki.com/control.js" defer></script>
+
+</html>
