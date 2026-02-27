@@ -29,6 +29,7 @@
         }
     </style>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DSEG7+Classic&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -119,22 +120,11 @@
         console.log("[Game] ゲーム開始！");
     }
 
-    // ゲーム停止時の得点計算（新仕様）
-    // - 5回以内に3HITしたら100点
-    // - 5回を超えて3HITした場合: 100 - 5 * 回数
-    // - 3HITしなかった場合: 100 - 10 * 回数
+    // ゲーム停止時の得点計算
+    // 得点 = 30 * HIT数 + 5 * BLOW数
+    // (1HIT=30点、2HIT=60点、3HIT=100点、各BLOW=+5点)
     function gameStop(won) {
-        if (typeof attempts === 'undefined') return 0;
-        let pts = 0;
-        if (won) {
-            if (attempts <= 5) {
-                pts = 100;
-            } else {
-                pts = 100 - 5 * attempts;
-            }
-        } else {
-            pts = 100 - 10 * attempts;
-        }
+        const pts = 30 * lastHits + 5 * lastBlows;
         return Math.max(0, pts);
     }
 
@@ -143,6 +133,8 @@
     let attempts = 0;
     let timeLeft = 30;
     let timerId = null;
+    let lastHits = 0;
+    let lastBlows = 0;
 
     function generateSecret() {
         const digits = [];
@@ -200,6 +192,8 @@
         if (new Set(raw.split('')).size !== 3) { alert('重複のない3桁にしてください'); return; }
         attempts++;
         const res = calcHitBlow(secret, raw);
+        lastHits = res.hits;
+        lastBlows = res.blows;
         const entry = document.createElement('div');
         entry.className = 'log-entry';
         entry.textContent = `${raw} — HIT:${res.hits} BLOW:${res.blows}`;
