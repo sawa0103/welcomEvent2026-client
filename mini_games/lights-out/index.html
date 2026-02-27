@@ -508,8 +508,8 @@
         // スコア計算
         if (cleared) {
             // クリア済み: 手数に応じたスコア（少ないほど高得点）
-            const idealMoves = 8;
-            const maxMoves = 40;
+            const idealMoves = 5;
+            const maxMoves = 20;
             if (moves <= idealMoves) {
                 points = 100;
             } else if (moves >= maxMoves) {
@@ -568,21 +568,33 @@
         resetBtn.disabled = (resetsLeft <= 0);
     }
 
-    // ===== パズル生成 =====
+    // ===== パズル生成（必ず解けるパターンのみ） =====
     function generateSolvablePuzzle() {
-        // すべて ON から始めて、ランダムなセルをクリック操作で反転
-        // これにより必ず解ける状態が生成される
+        // ゴール状態（全 ON）からスタート
         grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(true));
 
-        // ランダムに 6〜15 回のクリック操作を適用
-        const numClicks = 6 + Math.floor(Math.random() * 10);
-        for (let i = 0; i < numClicks; i++) {
-            const r = Math.floor(Math.random() * GRID_SIZE);
-            const c = Math.floor(Math.random() * GRID_SIZE);
-            toggleCell(r, c, true); // silent = true（レンダリングしない）
+        // 全セルのリストを作成してシャッフル
+        const allCells = [];
+        for (let r = 0; r < GRID_SIZE; r++) {
+            for (let c = 0; c < GRID_SIZE; c++) {
+                allCells.push([r, c]);
+            }
+        }
+        // Fisher-Yates シャッフル
+        for (let i = allCells.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allCells[i], allCells[j]] = [allCells[j], allCells[i]];
         }
 
-        // すべて ON にならないよう保証
+        // ランダムに 5〜7 個のセルを選んでクリック操作を適用
+        // 各セルは最大1回のみ → 打ち消しが起こらず、必ず解ける
+        const numClicks = 5 + Math.floor(Math.random() * 3);
+        for (let i = 0; i < numClicks && i < allCells.length; i++) {
+            const [r, c] = allCells[i];
+            toggleCell(r, c, true);
+        }
+
+        // すべて ON のままなら（偶然解が自明になった場合）中央をクリック
         let allOn = true;
         for (let r = 0; r < GRID_SIZE; r++) {
             for (let c = 0; c < GRID_SIZE; c++) {
@@ -591,7 +603,6 @@
             if (!allOn) break;
         }
         if (allOn) {
-            // もし全部点灯したら、中央をクリック
             toggleCell(2, 2, true);
         }
     }
