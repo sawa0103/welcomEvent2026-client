@@ -189,9 +189,12 @@
 
         .game-stats {
             display: flex;
-            gap: 2rem;
+            gap: 2.5rem;
             font-family: 'M PLUS Rounded 1c', sans-serif;
             font-size: clamp(0.75rem, 2vw, 0.9rem);
+            align-items: flex-end;
+            width: 100%;
+            padding-left: 20%;
         }
 
         .stat {
@@ -277,19 +280,28 @@
             }
         }
 
+        .grid-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: clamp(8px, 2vw, 16px);
+        }
+
         /* ===== RESET BUTTON ===== */
         .reset-btn {
             font-family: 'M PLUS Rounded 1c', sans-serif;
-            font-size: clamp(0.8rem, 2vw, 0.95rem);
+            font-size: clamp(0.7rem, 1.6vw, 0.8rem);
             font-weight: 700;
             color: rgba(240, 235, 220, 0.9);
             background: rgba(60, 55, 40, 0.7);
             border: 1px solid rgba(200, 170, 100, 0.25);
-            border-radius: 12px;
-            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            padding: 0.4rem 0.8rem;
             cursor: pointer;
             transition: all 0.2s ease;
             outline: none;
+            margin-left: auto;
+            white-space: nowrap;
         }
 
         .reset-btn:hover:not(:disabled) {
@@ -398,7 +410,7 @@
             </div>
             <div class="instruction-item">
                 <span class="instruction-icon">🔄</span>
-                <span>リセットでパズルを作り直せます（最大50回）。ただし1回につき-5点されます。</span>
+                <span>パズルは<strong>5〜7手</strong>で必ず解けます！難しいと感じたらリセットで別のパズルに挑戦しよう（最大50回、1回につき-5点）</span>
             </div>
             <div class="instruction-note">まもなくゲームが始まります...</div>
         </div>
@@ -417,10 +429,10 @@
                     <span class="stat-label">LIGHTS</span>
                     <span class="stat-value" id="light-count">0</span>
                 </div>
+                <button class="reset-btn" id="reset-btn" onclick="resetPuzzle()">🔄 リセット（残り <span
+                        id="reset-count">50</span> 回）</button>
             </div>
             <div class="grid" id="grid"></div>
-            <button class="reset-btn" id="reset-btn" onclick="resetPuzzle()">🔄 リセット（残り <span id="reset-count">50</span>
-                回）</button>
         </div>
     </div>
 
