@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ミニゲーム-ビーム防衛</title>
+
+<style>
+body {
+    background-color: #f0f0f0;
+    background-image: url("./data/background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.screen{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    width:100%;
+    height:100%;
+}
+
+/* ===== ゲーム画面 ===== */
+#game-screen{
+    position:relative;
+    width:min(960px,90vw);
+    height:min(640px,80vh);
+    background:#0b162d;
+    overflow:hidden;
+    border-radius:12px;
+}
+
+/* レーン */
+.lane{
+    position:absolute;
+    left:0;
+    width:100%;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+/* 敵 */
+.enemy{
+    position:absolute;
+    width:40px;
+    height:24px;
+    background:#ff4d4f;
+    border-radius:4px;
+}
+
+/* ビーム */
+.beam{
+    position:absolute;
+    bottom:0;
+    width:6px;
+    height:90%;
+    background:#60f0ff;
+    box-shadow:0 0 12px rgba(96,240,255,0.8);
+}
+
+/* ポート */
+.port{
+    position:absolute;
+    bottom:8px;
+    width:60px;
+    height:20px;
+    background:rgba(255,255,255,0.1);
+    text-align:center;
+    color:#ddd;
+    font-weight:bold;
+    line-height:20px;
+    border-radius:6px;
+    transform:translateX(-50%);
+}
+
+#score{
+    position:absolute;
+    top:10px;
+    left:10px;
+    color:white;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 開始画面 -->
+<div id="start-screen" class="screen">
+    <h1>敵をできるだけ撃ち落とせ！！</h1>
+</div>
+
+<!-- 説明画面 -->
+<div id="instruction-screen" class="screen" style="display:none;">
+    <h2>遊び方</h2>
+    <p>A D G J L キーで敵をできるだけ撃ち落とそう！！
+    </p>
+    <p>ビームにはクールタイムがあるから慎重に打とう！！</p>
+</div>
+
+<!-- ゲーム画面 -->
+<div id="game-screen" class="screen" style="display:none;">
+    <div id="score">SCORE: 0</div>
+</div>
+
+<script>
+
+const startScreen = document.getElementById("start-screen");
+const instructionScreen = document.getElementById("instruction-screen");
+const gameScreen = document.getElementById("game-screen");
+
+function instruction() {
+    startScreen.style.display = "none";
+    instructionScreen.style.display = "flex";
+    gameScreen.style.display = "none";
+}
+
+function gameStart() {
+    startScreen.style.display = "none";
+    instructionScreen.style.display = "none";
+    gameScreen.style.display = "flex";
+    initGame();
+}
+
+function gameStop() {
+
+    running = false;
+
+    startScreen.style.display = "flex";
+    instructionScreen.style.display = "none";
+    gameScreen.style.display = "none";
+
+    return Math.min(score, 100);
+}
+
+/* ===== ゲーム本体 ===== */
+
+const ROWS = 5;
+const PORTS = 5;
+const KEY_LABELS = ["A","D","G","J","L"];
+const COOLDOWN = 2000; // 2秒
+let lastShotTime = {};
+
+let enemies = [];
+let beams = [];
+let score = 0;
+let lastTime = 0;
+let spawnTimer = 0;
+let running = false;
+
+function initGame(){
+    gameScreen.innerHTML = '<div id="score">SCORE: 0</div>';
+    enemies = [];
+    beams = [];
+    score = 0;
+    spawnTimer = 0;
+    lastShotTime = {};  
+    running = true;
+
+    initLanes();
+    initPorts();
+    requestAnimationFrame(loop);
+}
+
+function initLanes(){
+    for(let i=0;i<ROWS;i++){
+        const lane=document.createElement("div");
+        lane.className="lane";
+        lane.style.top=(i*(100/ROWS))+"%";
+        lane.style.height=(100/ROWS)+"%";
+        gameScreen.appendChild(lane);
+    }
+}
+
+function initPorts(){
+    for(let i=0;i<PORTS;i++){
+        const port=document.createElement("div");
+        port.className="port";
+        port.textContent=KEY_LABELS[i];
+        const w=gameScreen.clientWidth/PORTS;
+        port.style.left=((i+0.5)*w)+"px";
+        gameScreen.appendChild(port);
+    }
+}
+
+document.addEventListener("keydown", e=>{
+    if(!running) return;
+    if(e.repeat) return;
+
+    const index = KEY_LABELS.indexOf(e.key.toUpperCase());
+    if(index!==-1) fireBeam(index);
+});
+
+function fireBeam(port){
+
+    const now = Date.now();
+
+    // 初回用
+    if(!lastShotTime[port]){
+        lastShotTime[port] = 0;
+    }
+
+    // クールタイム中なら撃てない
+    if(now - lastShotTime[port] < COOLDOWN){
+        return;
+    }
+
+    // 発射時刻更新
+    lastShotTime[port] = now;
+
+    const beam = document.createElement("div");
+    beam.className = "beam";
+
+    const w = gameScreen.clientWidth / PORTS;
+    const x = (port + 0.5) * w;
+
+    beam.style.left = x + "px";
+    gameScreen.appendChild(beam);
+
+    beams.push({
+        el: beam,
+        x: x,
+        life: 100
+    });
+}
+
+function spawnEnemy(){
+    const lane=Math.floor(Math.random()*ROWS);
+    const enemy=document.createElement("div");
+    enemy.className="enemy";
+
+    const laneHeight=gameScreen.clientHeight/ROWS;
+    enemy.style.top=(lane*laneHeight + laneHeight/2 -12)+"px";
+    enemy.style.left=gameScreen.clientWidth+"px";
+
+    gameScreen.appendChild(enemy);
+
+    enemies.push({
+        el:enemy,
+        x:gameScreen.clientWidth,
+        speed:500
+    });
+}
+
+function loop(now){
+    if(!running) return;
+
+    const dt=(now-lastTime)/1000;
+    lastTime=now;
+
+    spawnTimer+=dt;
+    if(spawnTimer>0.9){
+        spawnTimer=0;
+        spawnEnemy();
+    }
+
+    update(dt);
+    requestAnimationFrame(loop);
+}
+
+function update(dt){
+
+    for(let i=enemies.length-1;i>=0;i--){
+        const e=enemies[i];
+        e.x-=e.speed*dt;
+        e.el.style.left=e.x+"px";
+        if(e.x<-50){
+            e.el.remove();
+            enemies.splice(i,1);
+        }
+    }
+
+    for(let i=beams.length-1;i>=0;i--){
+        beams[i].life-=dt*1000;
+        if(beams[i].life<=0){
+            beams[i].el.remove();
+            beams.splice(i,1);
+        }
+    }
+
+    for(let bi=beams.length-1;bi>=0;bi--){
+        const b=beams[bi];
+        const left=b.x-3;
+        const right=b.x+3;
+
+        for(let ei=enemies.length-1;ei>=0;ei--){
+            const e=enemies[ei];
+            if(!(e.x+40<left || e.x>right)){
+                e.el.remove();
+                enemies.splice(ei,1);
+                score+=10;
+                document.getElementById("score").textContent="SCORE: "+score;
+                break;
+            }
+        }
+    }
+}
+</script>
+
+<!-- サーバー通信 -->
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="https://we2026_statics.sawayuki.com/control.js" defer></script>
+
+</body>
+</html>
