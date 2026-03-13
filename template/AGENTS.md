@@ -156,7 +156,7 @@ HTMLには3つの画面（div）があります：
 - **ゲーム開始**: `gameStart()` を呼び出す
 - **ゲーム終了**: `gameStop()` を呼び出し、alertで点数を表示
 
-ですが、基本的にcontrol.jsはオンラインから取得するのでいじる必要はありません。また、デフォルトでfalseになっています。
+ですが、control.jsはサーバーから自動的に配信されるのでいじる必要はありません。
 
 ---
 
@@ -169,7 +169,7 @@ exsample/
 └── data/
     └── background.png  # 背景画像（任意）
 
-オンライン control.js
+control.js はサーバー (port 50005) の /control.js から配信されます
 ```
 
 ---
