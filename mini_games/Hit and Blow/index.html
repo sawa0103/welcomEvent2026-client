@@ -36,7 +36,8 @@
     <!-- 開始画面 最初は表示する-->
     <div id="start-screen" class="screen">
         <!-- ここにコードを！ -->
-        
+       
+    
     <!-- 説明画面 最初は非表示-->
     
         <!-- ここにコードを！ -->
@@ -46,12 +47,13 @@
             <div class="moji">
                 
                 <!-- ゲームは30秒で終わる -->
-                <p>1️⃣  制限時間は <strong>30秒</strong> です</p>
-                <p>2️⃣ 暗号を少ない手順で回答できると点数が高いです</p>
+                <p> 制限時間は <strong>30秒</strong> です</p>
+                
                 <div class="score-table">
                     <p> <strong> HIT</strong>:数字も場所も当たっている</p>
                     <p><strong>BLOW</strong>:数字は当たってるけど、場所が違う</p>
-                    
+                    <p><strong>HI</strong>:５～９の数字が当てはまる</p>
+                     <p><strong>LOW</strong>:０～４の数字が当てはまる</p>
                 </div>
             </div>
         </div>
@@ -76,6 +78,9 @@
             <div id="log" style="margin-top:12px; max-height:300px; overflow:auto; width:360px;"></div>
             <div id="score" style="margin-top:8px;font-weight:700;"></div>
         </div>
+
+        <!-- 成功時のオーバーレイ画像（初期は非表示） -->
+        <img id="success-img" src="./data/解除成功.png" alt="解除成功" style="display:none;" />
 
          
         
@@ -121,10 +126,16 @@
     }
 
     // ゲーム停止時の得点計算
-    // 得点 = 30 * HIT数 + 5 * BLOW数
+    // 得点 = 30 * HIT数 + 5 * BLOW数（3HIT時は100点）
     // (1HIT=30点、2HIT=60点、3HIT=100点、各BLOW=+5点)
     function gameStop(won) {
-        const pts = 30 * lastHits + 5 * lastBlows;
+        let pts = 0;
+        if (lastHits === 3) {
+            pts = 100;
+        } else {
+            pts = 30 * lastHits;
+        }
+        pts += 5 * lastBlows;
         return Math.max(0, pts);
     }
 
@@ -205,6 +216,8 @@
         }
         // Boxes already show LOW/HI based on secret; do not overwrite here.
         if (res.hits === 3) {
+            // 成功アニメ表示
+            showSuccessAnimation();
             // reveal digits
             const a = document.querySelector('.code1 p'); if (a) a.textContent = secret[0];
             const b = document.querySelector('.code2 p'); if (b) b.textContent = secret[1];
@@ -239,6 +252,18 @@
         if (timerId) clearInterval(timerId);
         const pts = gameStop(won);
         if (scoreEl()) scoreEl().textContent = (won ? '正解！ ' : '終了！ ') + '得点: ' + pts.toFixed(1);
+    }
+
+    // 成功時に中央で画像をバウンス表示する
+    function showSuccessAnimation() {
+        const img = document.getElementById('success-img');
+        if (!img) return;
+        // 再生のためクラスをリセット
+        img.classList.remove('show-success');
+        // 表示してアニメーションを再生（アニメ後も表示を維持）
+        img.style.display = 'block';
+        void img.offsetWidth;
+        img.classList.add('show-success');
     }
 </script>
 <!-- サーバーとの通信用 -->
