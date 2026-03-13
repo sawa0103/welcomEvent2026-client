@@ -36,26 +36,26 @@
     <div id="start-screen" class="screen">
         <!-- ここにコードを！ -->
 
-    <div id="instruction-screen" class="screen" style="display: flex;">
-        <div class="card">
-            <h2> 薬草を混ぜてポーションを作ろう</h2>
-            <div class="moji">
-                
-                <!-- ゲームは30秒で終わる -->
-                <p><strong> 制限時間は 30秒 です</strong></p>
-                
-                <div class="score-table">
-                    <p> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
-                   <p> <strong>表示されるキーはA、D、G、J、L固定だよ。みんなで役割をきめてみてね</strong></p>
-                   
+        <div id="instruction-screen" class="screen" style="display: flex;">
+            <div class="card">
+                <h2> 薬草を混ぜてポーションを作ろう</h2>
+                <div class="moji">
+
+                    <!-- ゲームは30秒で終わる -->
+                    <p><strong> 制限時間は 30秒 です</strong></p>
+
+                    <div class="score-table">
+                        <p> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
+                        <p> <strong>表示されるキーはA、D、G、J、L固定だよ。みんなで役割をきめてみてね</strong></p>
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
 
     </div>
-    
+
 
     </div>
 
@@ -63,23 +63,23 @@
     <!-- 説明画面 最初は非表示-->
     <div id="instruction-screen" class="screen" style="display: none;">
         <!-- ここにコードを！ -->
-<div id="instruction-screen" class="screen" style="display: flex;">
-        <div class="card">
-            <h2> 薬草を混ぜてポーションを作ろう</h2>
-            <div class="moji">
-                
-                <!-- ゲームは30秒で終わる -->
-                <p><strong> 制限時間は 30秒 です</strong></p>
-                
-                <div class="score-table">
-                    <p> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
-                   
+        <div id="instruction-screen" class="screen" style="display: flex;">
+            <div class="card">
+                <h2> 薬草を混ぜてポーションを作ろう</h2>
+                <div class="moji">
+
+                    <!-- ゲームは30秒で終わる -->
+                    <p><strong> 制限時間は 30秒 です</strong></p>
+
+                    <div class="score-table">
+                        <p> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-    
+
 
     </div>
     <!-- ゲーム画面 最初は非表示-->
@@ -100,6 +100,7 @@
         width: 33.33%;
         font-size: 24px;
     }
+
     #keys {
         position: absolute;
         /* 画面中央よりやや上に配置 */
@@ -108,7 +109,7 @@
         width: 33.33%;
         font-size: 24px;
     }
-       
+
     #keys {
         position: absolute;
         /* 真ん中上に表示 */
@@ -129,6 +130,7 @@
         align-content: flex-start;
         flex-wrap: wrap;
     }
+
     .key-circle {
         width: 80px;
         height: 80px;
@@ -267,6 +269,6 @@
 <!-- サーバーとの通信用 -->
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <!-- いろいろな設定用 -->
-<script src="https://we2026_statics.sawayuki.com/control.js" defer></script>
+<script src="/control.js" defer></script>
 
 </html>
