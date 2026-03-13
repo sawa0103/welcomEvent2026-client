@@ -697,9 +697,9 @@
         // 全点灯！
         cleared = true;
 
-        // スコア計算（クリア時）
-        const idealMoves = 8;
-        const maxMoves = 40;
+        // gameStop と同じスコア計算
+        const idealMoves = 5;
+        const maxMoves = 20;
         if (moves <= idealMoves) {
             points = 100;
         } else if (moves >= maxMoves) {
@@ -707,6 +707,9 @@
         } else {
             points = Math.round(100 - (moves - idealMoves) / (maxMoves - idealMoves) * 50);
         }
+        // リセット使用ペナルティ
+        const resetPenalty = (MAX_RESETS - resetsLeft) * 5;
+        points = Math.max(points - resetPenalty, 50);
 
         clearScoreEl.textContent = `${moves} 手 ─ ${points} 点`;
         clearOverlay.classList.add("show");
