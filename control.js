@@ -200,7 +200,9 @@
                         point: clampedScore,
                     });
                     // スコアをalertで表示
-                    alert(`スコア: ${clampedScore}点`);
+                    if(Production_environment) {
+                        alert(`スコア: ${clampedScore}点`);
+                    }   
                 }
             } else {
                 console.warn("[control.js] gameStop()が定義されていません");
