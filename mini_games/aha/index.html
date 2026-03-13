@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポーションづくり</title>
+    <style>
+        body {
+            /* 背景の色を指定(もし画像が読み込まれなかったら時を想定するため) */
+            background-color: #f0f0f0;
+            /* 背景画像を指定 良いのがあれば好きなものを使っていいよ！！*/
+            background-image: url("./background.png");
+            /* 背景画像を覆うように指定 */
+            background-size: cover;
+            /* 背景画像を中央に配置するように指定 */
+            background-position: center;
+            /* 背景画像を繰り返さないように指定 */
+            background-repeat: no-repeat;
+            /* 子要素を画面中央に配置するようにする。 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 要素の大きさを指定する */
+            width: 100vw;
+            height: 100vh;
+            /* はみ出たものを非表示にする (なんか要素が見そえないときはこれをvisiableにすると良いかも)*/
+            overflow: hidden;
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- 開始画面 最初は表示する-->
+    <div id="start-screen" class="screen">
+        <!-- ここにコードを！ -->
+
+    <div id="instruction-screen" class="screen" style="display: flex;">
+        <div class="card">
+            <h2> 薬草を混ぜてポーションを作ろう</h2>
+            <div class="moji">
+                
+                <!-- ゲームは30秒で終わる -->
+                <p><strong> 制限時間は 30秒 です</strong></p>
+                
+                <div class="score-table">
+                    <p> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
+                   <p> <strong>表示されるキーはA、D、G、J、L固定だよ。みんなで役割をきめてみてね</strong></p>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    </div>
+    
+
+    </div>
+
+    </div>
+    <!-- 説明画面 最初は非表示-->
+    <div id="instruction-screen" class="screen" style="display: none;">
+        <!-- ここにコードを！ -->
+<div id="instruction-screen" class="screen" style="display: flex;">
+        <div class="card">
+            <h2> 薬草を混ぜてポーションを作ろう</h2>
+            <div class="moji">
+                
+                <!-- ゲームは30秒で終わる -->
+                <p><strong> 制限時間は 30秒 です</strong></p>
+                
+                <div class="score-table">
+                    <p> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+
+    </div>
+    <!-- ゲーム画面 最初は非表示-->
+    <div id="game-screen" class="screen" style="display: none;">
+        <!-- ここにコードを！ -->
+        <div id="score">スコア: 0</div>
+        <div id="countdown">残り時間: 30</div>
+        <div id="keys">押すキー: </div>
+    </div>
+</body>
+
+<style>
+    /* ここに自分のスタイルを！ */
+    #score {
+        position: absolute;
+        top: 90px;
+        left: 33.33%;
+        width: 33.33%;
+        font-size: 24px;
+    }
+    #keys {
+        position: absolute;
+        /* 画面中央よりやや上に配置 */
+        top: 40%;
+        left: 33.33%;
+        width: 33.33%;
+        font-size: 24px;
+    }
+       
+    #keys {
+        position: absolute;
+        /* 真ん中上に表示 */
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+        /* 高さは自動調整 */
+        height: auto;
+        font-size: 48px;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        /* ラップしたときは上揃えにして
+           5つ目の丸が他と同じ高さになるように */
+        align-items: flex-start;
+        /* 複数行を上方向に詰める */
+        align-content: flex-start;
+        flex-wrap: wrap;
+    }
+    .key-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: lightblue;
+        color: black;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 36px;
+        margin: 5px;
+    }
+</style>
+
+<script>
+    //各要素のIDを取得して操作をできるようにする。
+    const startScreen = document.getElementById("start-screen");
+    const instructionScreen = document.getElementById("instruction-screen");
+    const gameScreen = document.getElementById("game-screen");
+    const scoreDisplay = document.getElementById("score");
+    const keysDisplay = document.getElementById("keys");
+
+    let score = 0;
+    let currentKeys = [];
+    let keyIndex = 0;
+    let points = 0;
+    let gameTimer; // ゲームタイマー用変数
+    let countdownInterval; // カウントダウン用インターバル
+    let timeLeft = 30; // 残り時間
+
+    // ランダムな3～4つのキーを生成（表示は最大4つまで）
+    function generateKeys() {
+        const fixedKeys = ['A', 'G', 'L', 'D', 'J'];
+        // 3か4をランダムに選ぶ
+        const length = Math.floor(Math.random() * 2) + 3; // 3 or 4
+        currentKeys = [];
+        let html = '';
+        for (let i = 0; i < length; i++) {
+            const randomKey = fixedKeys[Math.floor(Math.random() * fixedKeys.length)];
+            currentKeys.push(randomKey);
+            html += '<div class="key-circle">' + randomKey + '</div> ';
+        }
+        keysDisplay.innerHTML = html;
+        keyIndex = 0;
+    }
+
+    // キーの表示を更新
+    function updateKeysDisplay() {
+        let html = '';
+        for (let i = keyIndex; i < currentKeys.length; i++) {
+            html += '<div class="key-circle">' + currentKeys[i] + '</div> ';
+        }
+        keysDisplay.innerHTML = html;
+    }
+
+    // キーボードイベントハンドラー
+    function handleKeyPress(event) {
+        const pressedKey = event.key.toUpperCase();
+        if (pressedKey === currentKeys[keyIndex]) {
+            keyIndex++;
+            updateKeysDisplay();
+            if (keyIndex === currentKeys.length) {
+                score++;
+                scoreDisplay.textContent = 'スコア: ' + score;
+                generateKeys();
+            }
+        } else {
+            // 間違ったらリセット
+            keyIndex = 0;
+            updateKeysDisplay();
+        }
+    }
+
+    //説明文を出すもの(サーバーから呼び出される)
+    function instruction() {
+        startScreen.style.display = "none";
+        instructionScreen.style.display = "flex";
+        gameScreen.style.display = "none";
+
+
+
+        console.log("[Game] 説明画面を表示");
+    }
+
+    //ゲームを開始するもの(サーバーから呼び出される)
+    function gameStart() {
+        // 画面切り替え
+        startScreen.style.display = "none";
+        instructionScreen.style.display = "none";
+        gameScreen.style.display = "flex";
+
+        // ゲーム初期化
+        score = 0;
+        scoreDisplay.textContent = 'スコア: ' + score;
+        generateKeys();
+        document.addEventListener('keydown', handleKeyPress);
+
+        // カウントダウン開始
+        timeLeft = 30;
+        document.getElementById('countdown').textContent = '残り時間: ' + timeLeft;
+        countdownInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('countdown').textContent = '残り時間: ' + timeLeft;
+            if (timeLeft <= 0) {
+                gameStop();
+            }
+        }, 1000); // 1秒ごとに更新
+
+        console.log("[Game] ゲーム開始！");
+    }
+    //ゲームを停止するもの(サーバーから呼び出される)
+    function gameStop() {
+        // タイマーをクリア
+        if (gameTimer) {
+            clearTimeout(gameTimer);
+            gameTimer = null;
+        }
+
+        // カウントダウンをクリア
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+        }
+
+        // ここに得点計算をするコードを！
+        document.removeEventListener('keydown', handleKeyPress);
+        points = Math.min(score * 10, 100); // スコアごとに10点、最大100点
+
+
+
+
+        //得点を返す 最大100点だよ！ 浮動小数点も対応だよ！
+        return Math.min(points, 100);
+    }
+</script>
+<!-- サーバーとの通信用 -->
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<!-- いろいろな設定用 -->
+<script src="https://we2026_statics.sawayuki.com/control.js" defer></script>
+
+</html>
