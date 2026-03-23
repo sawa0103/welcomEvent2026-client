@@ -1,0 +1,158 @@
+.moji{
+color:black;
+font-size :15px;
+font-family: sans-serif;
+}
+.card {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px 60px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+}
+.score-table {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+.code1{
+    background: white;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+    border: 2px solid rgba(0,0,0,0.06);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    margin: 8px;
+    font-size: 44px;
+    font-weight: 700;
+}
+.code2{
+    background: white;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+    border: 2px solid rgba(0,0,0,0.06);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    margin: 8px;
+    font-size: 44px;
+    font-weight: 700;
+}
+ .code3{
+    background: white;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+    border: 2px solid rgba(0,0,0,0.06);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    margin: 8px;
+    font-size: 44px;
+    font-weight: 700;
+}
+
+/* ゲーム画面のボックスを画面中央に配置（縦レイアウトにして入力欄を下に置く） */
+#game-screen{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* boxes を縦に並べて、system を横に表示 */
+.boxes{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.system{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 12px;
+    width: 100%;
+    max-width: 420px;
+}
+
+/* Larger input/button/timer and bigger log entries */
+.system .controls input{
+    width: 200px;
+    padding: 12px;
+    font-size: 18px;
+}
+.system .controls button{
+    padding: 10px 14px;
+    font-size: 18px;
+}
+#timer{
+    font-size: 18px;
+    font-weight: 700;
+}
+#log{
+    width: 360px;
+    max-height: 300px;
+    font-size: 16px;
+}
+.log-entry{
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    font-size: 16px;
+    text-align: center;
+}
+
+/* 7セグメントフォント適用 */
+#guess-input,
+#guess-btn,
+#timer,
+#log,
+.log-entry,
+.code1 p,
+.code2 p,
+.code3 p,
+#score {
+    font-family: 'DSEG7 Classic', monospace;
+}
+
+/* 成功時画像オーバーレイ */
+#success-img{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.25);
+    z-index: 999;
+    width: 480px; /* 2周り大きめ */
+    max-width: 90vw;
+    pointer-events: none;
+    display: none;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.25));
+}
+
+.show-success{
+    display: block !important;
+    animation: bounceIn 900ms cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+@keyframes bounceIn{
+    0% { transform: translate(-50%, -50%) scale(0.25); opacity: 0; }
+    60% { transform: translate(-50%, -50%) scale(1.25); opacity: 1; }
+    80% { transform: translate(-50%, -50%) scale(1.05); }
+    100% { transform: translate(-50%, -50%) scale(1.2); }
+}

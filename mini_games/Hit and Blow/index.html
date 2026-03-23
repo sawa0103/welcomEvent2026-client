@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ミニゲーム-例</title>
+    <title>宝箱の鍵開け</title>
     <style>
         body {
             /* 背景の色を指定(もし画像が読み込まれなかったら時を想定するため) */
@@ -28,24 +28,63 @@
             overflow: hidden;
         }
     </style>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DSEG7+Classic&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <!-- 開始画面 最初は表示する-->
     <div id="start-screen" class="screen">
         <!-- ここにコードを！ -->
-
-
-    </div>
+       
+    
     <!-- 説明画面 最初は非表示-->
-    <div id="instruction-screen" class="screen" style="display: none;">
+    
         <!-- ここにコードを！ -->
-
-
+         <div id="instruction-screen" class="screen" style="display: flex;">
+        <div class="card">
+            <h2> 暗号を解読し、宝箱を開けよう</h2>
+            <div class="moji">
+                
+                <!-- ゲームは30秒で終わる -->
+                <p> 制限時間は <strong>30秒</strong> です</p>
+                
+                <div class="score-table">
+                    <p> <strong> HIT</strong>:数字も場所も当たっている</p>
+                    <p><strong>BLOW</strong>:数字は当たってるけど、場所が違う</p>
+                    <p><strong>HI</strong>:５～９の数字が当てはまる</p>
+                     <p><strong>LOW</strong>:０～４の数字が当てはまる</p>
+                </div>
+            </div>
+        </div>
     </div>
+    </div>
+    
     <!-- ゲーム画面 最初は非表示-->
     <div id="game-screen" class="screen" style="display: none;">
-        <!-- ここにコードを！ -->
+        <!-- Boxes (vertical) and system placed side-by-side -->
+        <div class="boxes">
+            <div class="code1"><p>?</p></div>
+            <div class="code2"><p>?</p></div>
+            <div class="code3"><p>?</p></div>
+        </div>
+
+        <div class="system">
+            <div class="controls" style="display:flex;align-items:center;gap:8px;">
+                <input id="guess-input" placeholder="3桁(重複なし)" maxlength="3" style="width:200px;padding:12px;font-size:18px;" />
+                <button id="guess-btn" style="padding:10px 14px;font-size:18px;">判定</button>
+                <div id="timer" style="margin-left:12px;font-weight:700;font-size:18px;">30s</div>
+            </div>
+            <div id="log" style="margin-top:12px; max-height:300px; overflow:auto; width:360px;"></div>
+            <div id="score" style="margin-top:8px;font-weight:700;"></div>
+        </div>
+
+        <!-- 成功時のオーバーレイ画像（初期は非表示） -->
+        <img id="success-img" src="./data/解除成功.png" alt="解除成功" style="display:none;" />
+
+         
+        
+
 
 
     </div>
@@ -61,41 +100,175 @@
     const instructionScreen = document.getElementById("instruction-screen");
     const gameScreen = document.getElementById("game-screen");
 
-    //説明文を出すもの(サーバーから呼び出される)
+    const guessInput = () => document.getElementById('guess-input');
+    const guessBtn = () => document.getElementById('guess-btn');
+    const logEl = () => document.getElementById('log');
+    const timerEl = () => document.getElementById('timer');
+    const scoreEl = () => document.getElementById('score');
+
+    // 説明画面を表示
     function instruction() {
         startScreen.style.display = "none";
         instructionScreen.style.display = "flex";
         gameScreen.style.display = "none";
-
-
-
         console.log("[Game] 説明画面を表示");
     }
 
-    //ゲームを開始するもの(サーバーから呼び出される)
+    // gameStart が呼ばれたらゲームを開始する
     function gameStart() {
         // 画面切り替え
         startScreen.style.display = "none";
         instructionScreen.style.display = "none";
         gameScreen.style.display = "flex";
-
-
+        // Hit&Blow の初期化・開始
+        initHitAndBlow();
         console.log("[Game] ゲーム開始！");
     }
-    //ゲームを停止するもの(サーバーから呼び出される)
-    function gameStop() {
-        // ここに得点計算をするコードを！
 
+    // ゲーム停止時の得点計算
+    // 得点 = 30 * HIT数 + 5 * BLOW数（3HIT時は100点）
+    // (1HIT=30点、2HIT=60点、3HIT=100点、各BLOW=+5点)
+    function gameStop(won) {
+        let pts = 0;
+        if (lastHits === 3) {
+            pts = 100;
+        } else {
+            pts = 30 * lastHits;
+        }
+        pts += 5 * lastBlows;
+        return Math.max(0, pts);
+    }
 
+    // --- Hit & Blow 実装 ---
+    let secret = '';
+    let attempts = 0;
+    let timeLeft = 30;
+    let timerId = null;
+    let lastHits = 0;
+    let lastBlows = 0;
 
+    function generateSecret() {
+        const digits = [];
+        while (digits.length < 3) {
+            const d = Math.floor(Math.random() * 10).toString();
+            if (!digits.includes(d)) digits.push(d);
+        }
+        return digits.join('');
+    }
 
-        //得点を返す 最大100点だよ！ 浮動小数点も対応だよ！
-        return Math.min(points, 100);
+    function initHitAndBlow() {
+        secret = generateSecret();
+        attempts = 0;
+        timeLeft = 30;
+        if (timerId) clearInterval(timerId);
+        if (logEl()) logEl().innerHTML = '';
+        if (scoreEl()) scoreEl().textContent = '';
+        if (guessInput()) guessInput().value = '';
+        if (guessBtn()) guessBtn().disabled = false;
+        // show LOW/HI for each secret digit before any input
+        displayLowHiAll();
+        // attach handler
+        if (guessBtn()) guessBtn().onclick = handleGuess;
+        if (guessInput()) {
+            // Enterで判定できるようにする
+            guessInput().onkeydown = function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleGuess();
+                }
+            };
+            // 初期フォーカス
+            guessInput().focus();
+        }
+        updateTimerDisplay();
+        startTimer();
+    }
+
+    function startTimer() {
+        timerId = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                clearInterval(timerId);
+                endGame(false);
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() { if (timerEl()) timerEl().textContent = timeLeft + 's'; }
+
+    function handleGuess() {
+        const raw = guessInput().value.trim();
+        if (!/^[0-9]{3}$/.test(raw)) { alert('3桁の数字を入力してください'); return; }
+        if (new Set(raw.split('')).size !== 3) { alert('重複のない3桁にしてください'); return; }
+        attempts++;
+        const res = calcHitBlow(secret, raw);
+        lastHits = res.hits;
+        lastBlows = res.blows;
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.textContent = `${raw} — HIT:${res.hits} BLOW:${res.blows}`;
+        if (logEl()) {
+            // 古い入力が上に来るよう、末尾に追加（新しいものは下）
+            logEl().appendChild(entry);
+            // 最新を見やすくするために下までスクロール
+            logEl().scrollTop = logEl().scrollHeight;
+        }
+        // Boxes already show LOW/HI based on secret; do not overwrite here.
+        if (res.hits === 3) {
+            // 成功アニメ表示
+            showSuccessAnimation();
+            // reveal digits
+            const a = document.querySelector('.code1 p'); if (a) a.textContent = secret[0];
+            const b = document.querySelector('.code2 p'); if (b) b.textContent = secret[1];
+            const c = document.querySelector('.code3 p'); if (c) c.textContent = secret[2];
+            endGame(true);
+        }
+        if (guessInput()) guessInput().value = '';
+    }
+
+    // 初期表示: 各桁を LOW/HI で表示する (0-4 => LOW, 5-9 => HI)
+    function displayLowHiAll() {
+        for (let i = 0; i < 3; i++) {
+            const box = document.querySelector(`.code${i+1} p`);
+            if (!box) continue;
+            const secChar = secret[i];
+            const cat = (Number(secChar) <= 4) ? 'LOW' : 'HI';
+            box.textContent = cat;
+        }
+    }
+
+    function calcHitBlow(secret, guess) {
+        let hits = 0, blows = 0;
+        for (let i = 0; i < 3; i++) {
+            if (guess[i] === secret[i]) hits++;
+            else if (secret.includes(guess[i])) blows++;
+        }
+        return { hits, blows };
+    }
+
+    function endGame(won) {
+        if (guessBtn()) guessBtn().disabled = true;
+        if (timerId) clearInterval(timerId);
+        const pts = gameStop(won);
+        if (scoreEl()) scoreEl().textContent = (won ? '正解！ ' : '終了！ ') + '得点: ' + pts.toFixed(1);
+    }
+
+    // 成功時に中央で画像をバウンス表示する
+    function showSuccessAnimation() {
+        const img = document.getElementById('success-img');
+        if (!img) return;
+        // 再生のためクラスをリセット
+        img.classList.remove('show-success');
+        // 表示してアニメーションを再生（アニメ後も表示を維持）
+        img.style.display = 'block';
+        void img.offsetWidth;
+        img.classList.add('show-success');
     }
 </script>
 <!-- サーバーとの通信用 -->
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <!-- いろいろな設定用 -->
-<script src="https://we2026_statics.sawayuki.com/control.js" defer></script>
+<script src="/control.js" defer></script>
 
 </html>
