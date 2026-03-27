@@ -16,3 +16,17 @@ font-family: fantasy;
     border-radius: 10px;
     margin-top: 15px;
 }
+#potions {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+#potions img {
+    width: 80px;
+    height: 80px;
+    margin: 5px;
+}

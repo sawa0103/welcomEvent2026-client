@@ -35,24 +35,24 @@
     <!-- 開始画面 最初は表示する-->
     <div id="start-screen" class="screen">
         <!-- ここにコードを！ -->
-
-    <div id="instruction-screen" class="screen" style="display: flex;">
+　　<div id="instruction-screen" class="screen" style="display: flex;">
         <div class="card">
             <h2> 薬草を混ぜてポーションを作ろう</h2>
             <div class="moji">
                 
                 <!-- ゲームは30秒で終わる -->
-                <p><strong> 制限時間は 30秒 です</strong></p>
+                <p style="font-size: 2em;"><strong> 制限時間は 30秒 です</strong></p>
                 
                 <div class="score-table">
-                    <p> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
-                   <p> <strong>表示されるキーはA、D、G、J、L固定だよ。みんなで役割をきめてみてね</strong></p>
-                   
+                    <p style="font-size: 2em;"> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
+                    <p style="font-size: 2em;"> <strong>表示されるキーはA、D、G、J、L固定だよ。みんなで役割をきめてみてね</strong></p>
                 </div>
+             
             </div>
         </div>
     </div>
     </div>
+    
 
     </div>
     
@@ -73,8 +73,9 @@
                 
                 <div class="score-table">
                     <p> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
-                   
+                    <p> <strong>表示されるキーはA、D、G、J、L固定だよ。みんなで役割をきめてみてね</strong></p>
                 </div>
+                
             </div>
         </div>
     </div>
@@ -88,6 +89,7 @@
         <div id="score">スコア: 0</div>
         <div id="countdown">残り時間: 30</div>
         <div id="keys">押すキー: </div>
+        <div id="potions"></div>
     </div>
 </body>
 
@@ -175,6 +177,18 @@
         keyIndex = 0;
     }
 
+    // ポーションを表示
+    function updatePotions() {
+        const potionsDiv = document.getElementById('potions');
+        potionsDiv.innerHTML = '';
+        for (let i = 0; i < score; i++) {
+            const img = document.createElement('img');
+            img.src = './ポーション.png'; // 画像パス
+            img.alt = 'ポーション';
+            potionsDiv.appendChild(img);
+        }
+    }
+
     // キーの表示を更新
     function updateKeysDisplay() {
         let html = '';
@@ -193,6 +207,7 @@
             if (keyIndex === currentKeys.length) {
                 score++;
                 scoreDisplay.textContent = 'スコア: ' + score;
+                updatePotions();
                 generateKeys();
             }
         } else {
@@ -223,6 +238,7 @@
         // ゲーム初期化
         score = 0;
         scoreDisplay.textContent = 'スコア: ' + score;
+        updatePotions();
         generateKeys();
         document.addEventListener('keydown', handleKeyPress);
 
