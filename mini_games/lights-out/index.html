@@ -1,449 +1,452 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ライツアウト</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Noto+Sans+JP:wght@400;700&display=swap"
-        rel="stylesheet">
+      href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Noto+Sans+JP:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #2c2416;
+        background-image: url("./data/background.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        font-family: "Noto Sans JP", sans-serif;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: rgba(20, 15, 10, 0.55);
+        z-index: 0;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+      }
+
+      /* ===== START SCREEN ===== */
+      .title {
+        font-family: "M PLUS Rounded 1c", sans-serif;
+        font-size: clamp(2.5rem, 8vw, 4.5rem);
+        font-weight: 800;
+        color: #fff;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        letter-spacing: 0.1em;
+      }
+
+      .subtitle {
+        font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+        color: rgba(255, 240, 220, 0.7);
+        margin-top: 1.2rem;
+        letter-spacing: 0.3em;
+      }
+
+      .waiting-dots {
+        display: flex;
+        gap: 0.8rem;
+        margin-top: 2.5rem;
+      }
+
+      .waiting-dots span {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #f0c040;
+        animation: dotBounce 1.4s ease-in-out infinite;
+      }
+
+      .waiting-dots span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .waiting-dots span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes dotBounce {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.6);
+          opacity: 0.4;
         }
 
-        body {
-            background-color: #2c2416;
-            background-image: url("./data/background.png");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            font-family: 'Noto Sans JP', sans-serif;
+        40% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* ===== INSTRUCTION SCREEN ===== */
+      .instruction-panel {
+        background: rgba(40, 35, 25, 0.85);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(200, 170, 100, 0.25);
+        border-radius: 20px;
+        padding: clamp(1.5rem, 4vw, 2.5rem);
+        max-width: min(90vw, 480px);
+        width: 100%;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      }
+
+      .instruction-panel h2 {
+        font-family: "M PLUS Rounded 1c", sans-serif;
+        font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+        color: #f0c040;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+
+      .instruction-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.2rem;
+        color: rgba(240, 235, 220, 0.9);
+        font-size: clamp(0.85rem, 2vw, 1rem);
+        line-height: 1.6;
+      }
+
+      .instruction-icon {
+        font-size: 1.5rem;
+        flex-shrink: 0;
+        margin-top: 0.1rem;
+      }
+
+      .demo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+        width: 80px;
+        margin: 1rem auto;
+      }
+
+      .demo-cell {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        transition: all 0.3s;
+      }
+
+      .demo-cell.on {
+        background: #f0c040;
+      }
+
+      .demo-cell.off {
+        background: rgba(60, 55, 45, 0.8);
+        border: 1px solid rgba(150, 130, 90, 0.2);
+      }
+
+      .instruction-note {
+        text-align: center;
+        color: rgba(200, 180, 140, 0.6);
+        font-size: 0.85rem;
+        margin-top: 1.5rem;
+        font-style: italic;
+      }
+
+      /* ===== GAME SCREEN ===== */
+      .game-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: clamp(1rem, 3vw, 1.5rem);
+      }
+
+      .game-header {
+        font-family: "M PLUS Rounded 1c", sans-serif;
+        font-size: clamp(1.2rem, 3vw, 1.5rem);
+        color: #fff;
+        font-weight: 700;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .game-stats {
+        display: flex;
+        gap: 2.5rem;
+        font-family: "M PLUS Rounded 1c", sans-serif;
+        font-size: clamp(0.75rem, 2vw, 0.9rem);
+        align-items: flex-end;
+        width: 100%;
+        padding-left: 20%;
+      }
+
+      .stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .stat-label {
+        color: rgba(200, 180, 140, 0.6);
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+
+      .stat-value {
+        color: #fff;
+        font-weight: 700;
+        font-size: clamp(1rem, 2.5vw, 1.3rem);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: clamp(6px, 1.2vw, 10px);
+        padding: clamp(10px, 2.5vw, 18px);
+        background: rgba(40, 35, 25, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(200, 170, 100, 0.15);
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      }
+
+      .cell {
+        width: clamp(52px, 14vw, 72px);
+        height: clamp(52px, 14vw, 72px);
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        outline: none;
+      }
+
+      .cell.on {
+        background: linear-gradient(145deg, #f7d55a, #e8a820);
+        box-shadow:
+          0 3px 10px rgba(230, 170, 40, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      }
+
+      .cell.off {
+        background: rgba(50, 45, 35, 0.85);
+        border: 1px solid rgba(120, 100, 70, 0.15);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
+      }
+
+      .cell:hover {
+        transform: scale(1.06);
+        filter: brightness(1.1);
+      }
+
+      .cell:active {
+        transform: scale(0.95);
+      }
+
+      .cell.flip-anim {
+        animation: cellFlip 0.3s ease-out;
+      }
+
+      @keyframes cellFlip {
+        0% {
+          transform: scale(1);
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: rgba(20, 15, 10, 0.55);
-            z-index: 0;
+        50% {
+          transform: scale(0.88) rotateY(90deg);
         }
 
-        .screen {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1;
+        100% {
+          transform: scale(1) rotateY(0deg);
+        }
+      }
+
+      .grid-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: clamp(8px, 2vw, 16px);
+      }
+
+      /* ===== RESET BUTTON ===== */
+      .reset-btn {
+        font-family: "M PLUS Rounded 1c", sans-serif;
+        font-size: clamp(0.7rem, 1.6vw, 0.8rem);
+        font-weight: 700;
+        color: rgba(240, 235, 220, 0.9);
+        background: rgba(60, 55, 40, 0.7);
+        border: 1px solid rgba(200, 170, 100, 0.25);
+        border-radius: 10px;
+        padding: 0.4rem 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        outline: none;
+        margin-left: auto;
+        white-space: nowrap;
+      }
+
+      .reset-btn:hover:not(:disabled) {
+        background: rgba(80, 70, 50, 0.8);
+        transform: scale(1.03);
+      }
+
+      .reset-btn:active:not(:disabled) {
+        transform: scale(0.97);
+      }
+
+      .reset-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+
+      /* ===== CLEAR OVERLAY ===== */
+      .clear-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(20, 15, 10, 0.88);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        z-index: 100;
+        animation: fadeIn 0.5s ease-out;
+        pointer-events: none;
+      }
+
+      .clear-overlay.show {
+        display: flex;
+      }
+
+      .clear-text {
+        font-family: "M PLUS Rounded 1c", sans-serif;
+        font-size: clamp(2rem, 7vw, 3.5rem);
+        font-weight: 800;
+        color: #fff;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      .clear-score {
+        font-family: "M PLUS Rounded 1c", sans-serif;
+        font-size: clamp(1rem, 3vw, 1.5rem);
+        color: rgba(240, 200, 100, 0.9);
+        margin-top: 1rem;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
         }
 
-        /* ===== START SCREEN ===== */
-        .title {
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            font-weight: 800;
-            color: #fff;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-            letter-spacing: 0.1em;
+        to {
+          opacity: 1;
         }
+      }
 
-        .subtitle {
-            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-            color: rgba(255, 240, 220, 0.7);
-            margin-top: 1.2rem;
-            letter-spacing: 0.3em;
-        }
-
-        .waiting-dots {
-            display: flex;
-            gap: 0.8rem;
-            margin-top: 2.5rem;
-        }
-
-        .waiting-dots span {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #f0c040;
-            animation: dotBounce 1.4s ease-in-out infinite;
-        }
-
-        .waiting-dots span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .waiting-dots span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes dotBounce {
-
-            0%,
-            80%,
-            100% {
-                transform: scale(0.6);
-                opacity: 0.4;
-            }
-
-            40% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        /* ===== INSTRUCTION SCREEN ===== */
-        .instruction-panel {
-            background: rgba(40, 35, 25, 0.85);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(200, 170, 100, 0.25);
-            border-radius: 20px;
-            padding: clamp(1.5rem, 4vw, 2.5rem);
-            max-width: min(90vw, 480px);
-            width: 100%;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .instruction-panel h2 {
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            font-size: clamp(1.2rem, 3.5vw, 1.6rem);
-            color: #f0c040;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-        }
-
-        .instruction-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 1.2rem;
-            color: rgba(240, 235, 220, 0.9);
-            font-size: clamp(0.85rem, 2vw, 1rem);
-            line-height: 1.6;
-        }
-
-        .instruction-icon {
-            font-size: 1.5rem;
-            flex-shrink: 0;
-            margin-top: 0.1rem;
-        }
-
-        .demo-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 4px;
-            width: 80px;
-            margin: 1rem auto;
-        }
-
-        .demo-cell {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
-            transition: all 0.3s;
-        }
-
-        .demo-cell.on {
-            background: #f0c040;
-        }
-
-        .demo-cell.off {
-            background: rgba(60, 55, 45, 0.8);
-            border: 1px solid rgba(150, 130, 90, 0.2);
-        }
-
-        .instruction-note {
-            text-align: center;
-            color: rgba(200, 180, 140, 0.6);
-            font-size: 0.85rem;
-            margin-top: 1.5rem;
-            font-style: italic;
-        }
-
-        /* ===== GAME SCREEN ===== */
-        .game-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: clamp(1rem, 3vw, 1.5rem);
-        }
-
-        .game-header {
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            font-size: clamp(1.2rem, 3vw, 1.5rem);
-            color: #fff;
-            font-weight: 700;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .game-stats {
-            display: flex;
-            gap: 2.5rem;
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            font-size: clamp(0.75rem, 2vw, 0.9rem);
-            align-items: flex-end;
-            width: 100%;
-            padding-left: 20%;
-        }
-
-        .stat {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .stat-label {
-            color: rgba(200, 180, 140, 0.6);
-            font-size: 0.65rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-        }
-
-        .stat-value {
-            color: #fff;
-            font-weight: 700;
-            font-size: clamp(1rem, 2.5vw, 1.3rem);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: clamp(6px, 1.2vw, 10px);
-            padding: clamp(10px, 2.5vw, 18px);
-            background: rgba(40, 35, 25, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(200, 170, 100, 0.15);
-            border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-        }
-
-        .cell {
-            width: clamp(52px, 14vw, 72px);
-            height: clamp(52px, 14vw, 72px);
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            outline: none;
-        }
-
-        .cell.on {
-            background: linear-gradient(145deg, #f7d55a, #e8a820);
-            box-shadow:
-                0 3px 10px rgba(230, 170, 40, 0.35),
-                inset 0 1px 0 rgba(255, 255, 255, 0.35);
-        }
-
-        .cell.off {
-            background: rgba(50, 45, 35, 0.85);
-            border: 1px solid rgba(120, 100, 70, 0.15);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
-        }
-
-        .cell:hover {
-            transform: scale(1.06);
-            filter: brightness(1.1);
-        }
-
-        .cell:active {
-            transform: scale(0.95);
-        }
-
-        .cell.flip-anim {
-            animation: cellFlip 0.3s ease-out;
-        }
-
-        @keyframes cellFlip {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(0.88) rotateY(90deg);
-            }
-
-            100% {
-                transform: scale(1) rotateY(0deg);
-            }
-        }
-
-        .grid-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: clamp(8px, 2vw, 16px);
-        }
-
-        /* ===== RESET BUTTON ===== */
-        .reset-btn {
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            font-size: clamp(0.7rem, 1.6vw, 0.8rem);
-            font-weight: 700;
-            color: rgba(240, 235, 220, 0.9);
-            background: rgba(60, 55, 40, 0.7);
-            border: 1px solid rgba(200, 170, 100, 0.25);
-            border-radius: 10px;
-            padding: 0.4rem 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            outline: none;
-            margin-left: auto;
-            white-space: nowrap;
-        }
-
-        .reset-btn:hover:not(:disabled) {
-            background: rgba(80, 70, 50, 0.8);
-            transform: scale(1.03);
-        }
-
-        .reset-btn:active:not(:disabled) {
-            transform: scale(0.97);
-        }
-
-        .reset-btn:disabled {
-            opacity: 0.35;
-            cursor: not-allowed;
-        }
-
-        /* ===== CLEAR OVERLAY ===== */
-        .clear-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(20, 15, 10, 0.88);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            z-index: 100;
-            animation: fadeIn 0.5s ease-out;
-            pointer-events: none;
-        }
-
-        .clear-overlay.show {
-            display: flex;
-        }
-
-        .clear-text {
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            font-size: clamp(2rem, 7vw, 3.5rem);
-            font-weight: 800;
-            color: #fff;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-        }
-
-        .clear-score {
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            font-size: clamp(1rem, 3vw, 1.5rem);
-            color: rgba(240, 200, 100, 0.9);
-            margin-top: 1rem;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* ===== PARTICLES (hidden) ===== */
-        .particles {
-            display: none;
-        }
+      /* ===== PARTICLES (hidden) ===== */
+      .particles {
+        display: none;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- パーティクルエフェクト -->
     <div class="particles" id="particles"></div>
 
     <!-- 開始画面 -->
     <div id="start-screen" class="screen">
-        <div class="title">LIGHTS OUT</div>
-        <div class="subtitle">待機中...</div>
-        <div class="waiting-dots">
-            <span></span><span></span><span></span>
-        </div>
+      <div class="title">LIGHTS OUT</div>
+      <div class="subtitle">待機中...</div>
+      <div class="waiting-dots"><span></span><span></span><span></span></div>
     </div>
 
     <!-- 説明画面 -->
-    <div id="instruction-screen" class="screen" style="display: none;">
-        <div class="instruction-panel">
-            <h2>📖 遊び方</h2>
-            <div class="instruction-item">
-                <span class="instruction-icon">💡</span>
-                <span>セルをクリックすると、そのセルと<strong>上下左右</strong>の隣接セルの ON / OFF が反転します。</span>
-            </div>
-            <div class="demo-grid">
-                <div class="demo-cell off"></div>
-                <div class="demo-cell on"></div>
-                <div class="demo-cell off"></div>
-                <div class="demo-cell on"></div>
-                <div class="demo-cell on"></div>
-                <div class="demo-cell on"></div>
-                <div class="demo-cell off"></div>
-                <div class="demo-cell on"></div>
-                <div class="demo-cell off"></div>
-            </div>
-            <div class="instruction-item">
-                <span class="instruction-icon">🎯</span>
-                <span><strong>すべてのライトを点灯</strong>させればクリア！</span>
-            </div>
-            <div class="instruction-item">
-                <span class="instruction-icon">⭐</span>
-                <span>少ない手数でクリアするほど高得点！（最大100点）</span>
-            </div>
-            <div class="instruction-item">
-                <span class="instruction-icon">🔄</span>
-                <span>パズルは<strong>5〜7手</strong>で必ず解けます！難しいと感じたらリセットで別のパズルに挑戦しよう（最大50回、1回につき-5点）</span>
-            </div>
-            <div class="instruction-note">まもなくゲームが始まります...</div>
+    <div id="instruction-screen" class="screen" style="display: none">
+      <div class="instruction-panel">
+        <h2>📖 遊び方</h2>
+        <div class="instruction-item">
+          <span class="instruction-icon">💡</span>
+          <span
+            >セルをクリックすると、そのセルと<strong>上下左右</strong>の隣接セルの
+            ON / OFF が反転します。</span
+          >
         </div>
+        <div class="demo-grid">
+          <div class="demo-cell off"></div>
+          <div class="demo-cell on"></div>
+          <div class="demo-cell off"></div>
+          <div class="demo-cell on"></div>
+          <div class="demo-cell on"></div>
+          <div class="demo-cell on"></div>
+          <div class="demo-cell off"></div>
+          <div class="demo-cell on"></div>
+          <div class="demo-cell off"></div>
+        </div>
+        <div class="instruction-item">
+          <span class="instruction-icon">🎯</span>
+          <span><strong>すべてのライトを点灯</strong>させればクリア！</span>
+        </div>
+        <div class="instruction-item">
+          <span class="instruction-icon">⭐</span>
+          <span>少ない手数でクリアするほど高得点！（最大100点）</span>
+        </div>
+        <div class="instruction-item">
+          <span class="instruction-icon">🔄</span>
+          <span
+            >パズルは<strong>5〜7手</strong>で必ず解けます！難しいと感じたらリセットで別のパズルに挑戦しよう（最大50回、1回につき-5点）</span
+          >
+        </div>
+        <div class="instruction-note">まもなくゲームが始まります...</div>
+      </div>
     </div>
 
     <!-- ゲーム画面 -->
-    <div id="game-screen" class="screen" style="display: none;">
-        <div class="game-container">
-            <div class="game-header">LIGHTS OUT</div>
-            <div class="game-stats">
-                <div class="stat">
-                    <span class="stat-label">MOVES</span>
-                    <span class="stat-value" id="move-count">0</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">LIGHTS</span>
-                    <span class="stat-value" id="light-count">0</span>
-                </div>
-                <button class="reset-btn" id="reset-btn" onclick="resetPuzzle()">🔄 リセット（残り <span
-                        id="reset-count">50</span> 回）</button>
-            </div>
-            <div class="grid" id="grid"></div>
+    <div id="game-screen" class="screen" style="display: none">
+      <div class="game-container">
+        <div class="game-header">LIGHTS OUT</div>
+        <div class="game-stats">
+          <div class="stat">
+            <span class="stat-label">MOVES</span>
+            <span class="stat-value" id="move-count">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">LIGHTS</span>
+            <span class="stat-value" id="light-count">0</span>
+          </div>
+          <button class="reset-btn" id="reset-btn" onclick="resetPuzzle()">
+            🔄 リセット（残り <span id="reset-count">50</span> 回）
+          </button>
         </div>
+        <div class="grid" id="grid"></div>
+      </div>
     </div>
 
     <!-- クリアオーバーレイ -->
     <div class="clear-overlay" id="clear-overlay">
-        <div class="clear-text">🎉 CLEAR!</div>
-        <div class="clear-score" id="clear-score"></div>
+      <div class="clear-text">🎉 CLEAR!</div>
+      <div class="clear-score" id="clear-score"></div>
     </div>
-</body>
+  </body>
 
-<script>
+  <script>
     // ===== 画面要素の取得 =====
     const startScreen = document.getElementById("start-screen");
     const instructionScreen = document.getElementById("instruction-screen");
@@ -456,7 +459,7 @@
 
     // ===== ゲーム状態 =====
     const GRID_SIZE = 5;
-    let grid = [];       // 5x5 の boolean 配列 (true = ON)
+    let grid = []; // 5x5 の boolean 配列 (true = ON)
     let moves = 0;
     let points = 0;
     let cleared = false;
@@ -466,93 +469,95 @@
 
     // ===== パーティクル生成 =====
     (function createParticles() {
-        const container = document.getElementById("particles");
-        for (let i = 0; i < 30; i++) {
-            const p = document.createElement("div");
-            p.className = "particle";
-            p.style.left = Math.random() * 100 + "%";
-            p.style.animationDuration = (6 + Math.random() * 10) + "s";
-            p.style.animationDelay = (Math.random() * 8) + "s";
-            p.style.width = p.style.height = (2 + Math.random() * 3) + "px";
-            container.appendChild(p);
-        }
+      const container = document.getElementById("particles");
+      for (let i = 0; i < 30; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        p.style.left = Math.random() * 100 + "%";
+        p.style.animationDuration = 6 + Math.random() * 10 + "s";
+        p.style.animationDelay = Math.random() * 8 + "s";
+        p.style.width = p.style.height = 2 + Math.random() * 3 + "px";
+        container.appendChild(p);
+      }
     })();
 
     // ===== 3つの必須関数 =====
 
     // 説明画面を表示
     function instruction() {
-        startScreen.style.display = "none";
-        instructionScreen.style.display = "flex";
-        gameScreen.style.display = "none";
-        clearOverlay.classList.remove("show");
-        console.log("[Game] 説明画面を表示");
+      startScreen.style.display = "none";
+      instructionScreen.style.display = "flex";
+      gameScreen.style.display = "none";
+      clearOverlay.classList.remove("show");
+      console.log("[Game] 説明画面を表示");
     }
 
     // ゲーム開始
     function gameStart() {
-        startScreen.style.display = "none";
-        instructionScreen.style.display = "none";
-        gameScreen.style.display = "flex";
-        clearOverlay.classList.remove("show");
+      startScreen.style.display = "none";
+      instructionScreen.style.display = "none";
+      gameScreen.style.display = "flex";
+      clearOverlay.classList.remove("show");
 
-        // 状態初期化
-        moves = 0;
-        points = 0;
-        cleared = false;
-        gameActive = true;
-        resetsLeft = MAX_RESETS;
-        updateResetButton();
-        moveCountEl.textContent = "0";
+      // 状態初期化
+      moves = 0;
+      points = 0;
+      cleared = false;
+      gameActive = true;
+      resetsLeft = MAX_RESETS;
+      updateResetButton();
+      moveCountEl.textContent = "0";
 
-        // パズル生成（解けることが保証される方法）
-        generateSolvablePuzzle();
-        renderGrid();
-        updateLightCount();
+      // パズル生成（解けることが保証される方法）
+      generateSolvablePuzzle();
+      renderGrid();
+      updateLightCount();
 
-        console.log("[Game] ゲーム開始！");
+      console.log("[Game] ゲーム開始！");
     }
 
     // ゲーム終了 → スコアを返す
     function gameStop() {
-        gameActive = false;
+      gameActive = false;
 
-        // スコア計算
-        if (cleared) {
-            // クリア済み: 手数に応じたスコア（少ないほど高得点）
-            const idealMoves = 5;
-            const maxMoves = 20;
-            if (moves <= idealMoves) {
-                points = 100;
-            } else if (moves >= maxMoves) {
-                points = 50;
-            } else {
-                points = Math.round(100 - (moves - idealMoves) / (maxMoves - idealMoves) * 50);
-            }
-            // リセット使用ペナルティ: 1回につき -5点
-            const resetPenalty = (MAX_RESETS - resetsLeft) * 5;
-            points = Math.max(points - resetPenalty, 50);
+      // スコア計算
+      if (cleared) {
+        // クリア済み: 手数に応じたスコア（少ないほど高得点）
+        const idealMoves = 3;
+        const maxMoves = 20;
+        if (moves <= idealMoves) {
+          points = 100;
+        } else if (moves >= maxMoves) {
+          points = 50;
         } else {
-            // 未クリア: 点灯したセルの割合に応じた部分点（最大 40 点）
-            const totalCells = GRID_SIZE * GRID_SIZE;
-            let lightsOn = 0;
-            for (let r = 0; r < GRID_SIZE; r++) {
-                for (let c = 0; c < GRID_SIZE; c++) {
-                    if (grid[r][c]) lightsOn++;
-                }
-            }
-            const onRatio = lightsOn / totalCells;
-            points = Math.round(onRatio * 40);
+          points = Math.round(
+            100 - ((moves - idealMoves) / (maxMoves - idealMoves)) * 50,
+          );
         }
+        // リセット使用ペナルティ: 1回につき -5点
+        const resetPenalty = (MAX_RESETS - resetsLeft) * 5;
+        points = Math.max(points - resetPenalty, 50);
+      } else {
+        // 未クリア: 点灯したセルの割合に応じた部分点（最大 100 点）
+        const totalCells = GRID_SIZE * GRID_SIZE;
+        let lightsOn = 0;
+        for (let r = 0; r < GRID_SIZE; r++) {
+          for (let c = 0; c < GRID_SIZE; c++) {
+            if (grid[r][c]) lightsOn++;
+          }
+        }
+        const onRatio = lightsOn / totalCells;
+        points = Math.round(onRatio * 100);
+      }
 
-        // 開始画面に戻す
-        startScreen.style.display = "flex";
-        instructionScreen.style.display = "none";
-        gameScreen.style.display = "none";
-        clearOverlay.classList.remove("show");
+      // 開始画面に戻す
+      startScreen.style.display = "flex";
+      instructionScreen.style.display = "none";
+      gameScreen.style.display = "none";
+      clearOverlay.classList.remove("show");
 
-        console.log("[Game] ゲーム終了！ スコア:", points);
-        return Math.min(points, 100);
+      console.log("[Game] ゲーム終了！ スコア:", points);
+      return Math.min(points, 100);
     }
 
     // ===== リセット機能 =====
@@ -560,162 +565,174 @@
     const resetCountEl = document.getElementById("reset-count");
 
     function resetPuzzle() {
-        if (!gameActive || cleared || resetsLeft <= 0) return;
+      if (!gameActive || cleared || resetsLeft <= 0) return;
 
-        resetsLeft--;
-        moves = 0;
-        moveCountEl.textContent = "0";
-        updateResetButton();
+      resetsLeft--;
+      moves = 0;
+      moveCountEl.textContent = "0";
+      updateResetButton();
 
-        // 新しいパズルを生成
-        generateSolvablePuzzle();
-        renderGrid();
-        updateLightCount();
+      // 新しいパズルを生成
+      generateSolvablePuzzle();
+      renderGrid();
+      updateLightCount();
 
-        console.log("[Game] リセット！ 残り:", resetsLeft, "回");
+      console.log("[Game] リセット！ 残り:", resetsLeft, "回");
     }
 
     function updateResetButton() {
-        resetCountEl.textContent = resetsLeft;
-        resetBtn.disabled = (resetsLeft <= 0);
+      resetCountEl.textContent = resetsLeft;
+      resetBtn.disabled = resetsLeft <= 0;
     }
 
     // ===== パズル生成（必ず解けるパターンのみ） =====
     function generateSolvablePuzzle() {
-        // ゴール状態（全 ON）からスタート
-        grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(true));
+      // ゴール状態（全 ON）からスタート
+      grid = Array.from({ length: GRID_SIZE }, () =>
+        Array(GRID_SIZE).fill(true),
+      );
 
-        // 全セルのリストを作成してシャッフル
-        const allCells = [];
-        for (let r = 0; r < GRID_SIZE; r++) {
-            for (let c = 0; c < GRID_SIZE; c++) {
-                allCells.push([r, c]);
-            }
+      // 全セルのリストを作成してシャッフル
+      const allCells = [];
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          allCells.push([r, c]);
         }
-        // Fisher-Yates シャッフル
-        for (let i = allCells.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [allCells[i], allCells[j]] = [allCells[j], allCells[i]];
-        }
+      }
+      // Fisher-Yates シャッフル
+      for (let i = allCells.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allCells[i], allCells[j]] = [allCells[j], allCells[i]];
+      }
 
-        // ランダムに 5〜7 個のセルを選んでクリック操作を適用
-        // 各セルは最大1回のみ → 打ち消しが起こらず、必ず解ける
-        const numClicks = 5 + Math.floor(Math.random() * 3);
-        for (let i = 0; i < numClicks && i < allCells.length; i++) {
-            const [r, c] = allCells[i];
-            toggleCell(r, c, true);
-        }
+      // ランダムに 5〜7 個のセルを選んでクリック操作を適用
+      // 各セルは最大1回のみ → 打ち消しが起こらず、必ず解ける
+      const numClicks = 5 + Math.floor(Math.random() * 3);
+      for (let i = 0; i < numClicks && i < allCells.length; i++) {
+        const [r, c] = allCells[i];
+        toggleCell(r, c, true);
+      }
 
-        // すべて ON のままなら（偶然解が自明になった場合）中央をクリック
-        let allOn = true;
-        for (let r = 0; r < GRID_SIZE; r++) {
-            for (let c = 0; c < GRID_SIZE; c++) {
-                if (!grid[r][c]) { allOn = false; break; }
-            }
-            if (!allOn) break;
+      // すべて ON のままなら（偶然解が自明になった場合）中央をクリック
+      let allOn = true;
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          if (!grid[r][c]) {
+            allOn = false;
+            break;
+          }
         }
-        if (allOn) {
-            toggleCell(2, 2, true);
-        }
+        if (!allOn) break;
+      }
+      if (allOn) {
+        toggleCell(2, 2, true);
+      }
     }
 
     // ===== セル反転 =====
     function toggleCell(row, col, silent) {
-        const directions = [
-            [0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]
-        ];
+      const directions = [
+        [0, 0],
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1],
+      ];
+      directions.forEach(([dr, dc]) => {
+        const nr = row + dr;
+        const nc = col + dc;
+        if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE) {
+          grid[nr][nc] = !grid[nr][nc];
+        }
+      });
+
+      if (!silent) {
+        moves++;
+        moveCountEl.textContent = moves;
+        renderGrid();
+        updateLightCount();
+
+        // アニメーション
         directions.forEach(([dr, dc]) => {
-            const nr = row + dr;
-            const nc = col + dc;
-            if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE) {
-                grid[nr][nc] = !grid[nr][nc];
+          const nr = row + dr;
+          const nc = col + dc;
+          if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE) {
+            const cellEl = document.querySelector(
+              `[data-row="${nr}"][data-col="${nc}"]`,
+            );
+            if (cellEl) {
+              cellEl.classList.remove("flip-anim");
+              void cellEl.offsetWidth; // reflow
+              cellEl.classList.add("flip-anim");
             }
+          }
         });
 
-        if (!silent) {
-            moves++;
-            moveCountEl.textContent = moves;
-            renderGrid();
-            updateLightCount();
-
-            // アニメーション
-            directions.forEach(([dr, dc]) => {
-                const nr = row + dr;
-                const nc = col + dc;
-                if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE) {
-                    const cellEl = document.querySelector(`[data-row="${nr}"][data-col="${nc}"]`);
-                    if (cellEl) {
-                        cellEl.classList.remove("flip-anim");
-                        void cellEl.offsetWidth; // reflow
-                        cellEl.classList.add("flip-anim");
-                    }
-                }
-            });
-
-            // クリアチェック
-            checkClear();
-        }
+        // クリアチェック
+        checkClear();
+      }
     }
 
     // ===== グリッド描画 =====
     function renderGrid() {
-        gridEl.innerHTML = "";
-        for (let r = 0; r < GRID_SIZE; r++) {
-            for (let c = 0; c < GRID_SIZE; c++) {
-                const cell = document.createElement("button");
-                cell.className = "cell " + (grid[r][c] ? "on" : "off");
-                cell.dataset.row = r;
-                cell.dataset.col = c;
-                cell.addEventListener("click", () => {
-                    if (gameActive && !cleared) {
-                        toggleCell(r, c, false);
-                    }
-                });
-                gridEl.appendChild(cell);
+      gridEl.innerHTML = "";
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const cell = document.createElement("button");
+          cell.className = "cell " + (grid[r][c] ? "on" : "off");
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+          cell.addEventListener("click", () => {
+            if (gameActive && !cleared) {
+              toggleCell(r, c, false);
             }
+          });
+          gridEl.appendChild(cell);
         }
+      }
     }
 
     // ===== ライト数更新 =====
     function updateLightCount() {
-        let count = 0;
-        for (let r = 0; r < GRID_SIZE; r++) {
-            for (let c = 0; c < GRID_SIZE; c++) {
-                if (grid[r][c]) count++;
-            }
+      let count = 0;
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          if (grid[r][c]) count++;
         }
-        lightCountEl.textContent = count;
+      }
+      lightCountEl.textContent = count;
     }
 
     // ===== クリアチェック =====
     function checkClear() {
-        for (let r = 0; r < GRID_SIZE; r++) {
-            for (let c = 0; c < GRID_SIZE; c++) {
-                if (!grid[r][c]) return; // まだ消灯中
-            }
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          if (!grid[r][c]) return; // まだ消灯中
         }
-        // 全点灯！
-        cleared = true;
+      }
+      // 全点灯！
+      cleared = true;
 
-        // スコア計算（クリア時）
-        const idealMoves = 8;
-        const maxMoves = 40;
-        if (moves <= idealMoves) {
-            points = 100;
-        } else if (moves >= maxMoves) {
-            points = 50;
-        } else {
-            points = Math.round(100 - (moves - idealMoves) / (maxMoves - idealMoves) * 50);
-        }
+      // スコア計算（クリア時）
+      const idealMoves = 3;
+      const maxMoves = 20;
+      if (moves <= idealMoves) {
+        points = 100;
+      } else if (moves >= maxMoves) {
+        points = 50;
+      } else {
+        points = Math.round(
+          100 - ((moves - idealMoves) / (maxMoves - idealMoves)) * 50,
+        );
+      }
 
-        clearScoreEl.textContent = `${moves} 手 ─ ${points} 点`;
-        clearOverlay.classList.add("show");
+      clearScoreEl.textContent = `${moves} 手 ─ ${points} 点`;
+      clearOverlay.classList.add("show");
     }
-</script>
+  </script>
 
-<!-- サーバーとの通信用 -->
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<!-- いろいろな設定用 -->
-<script src="/control.js" defer></script>
-
+  <!-- サーバーとの通信用 -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <!-- いろいろな設定用 -->
+  <script src="/control.js" defer></script>
 </html>
