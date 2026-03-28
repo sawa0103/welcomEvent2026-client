@@ -47,7 +47,7 @@
 
                 
                 <div class="score-table">
-                    <p style="font-size: 1.5em;"> <strong>表示されるキーは <span class="fixed-keys">A / D / G / J / L</span> 固定だよ。みんなで役割をきめてみてね</strong></p>
+                    <p style="font-size: 1.5em;"> <strong> <span class="fixed-keys">A / D / G / J / L</span> 固定だよ。みんなで役割をきめてみてね</strong></p>
                     
                     
                 </div>
@@ -157,6 +157,24 @@
         align-items: center;
         font-size: 36px;
         margin: 5px;
+        border: 3px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.16);
+        transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+    }
+
+    .key-circle.next-key {
+        background: linear-gradient(135deg, #ffe07a 0%, #ffb74d 100%);
+        border-color: #ff8f00;
+        color: #222;
+        box-shadow: 0 0 0 4px rgba(255, 167, 38, 0.35), 0 10px 18px rgba(0, 0, 0, 0.25);
+        transform: scale(1.1);
+        animation: pulseNextKey 0.9s ease-in-out infinite;
+    }
+
+    @keyframes pulseNextKey {
+        0% { transform: scale(1.1); }
+        50% { transform: scale(1.18); }
+        100% { transform: scale(1.1); }
     }
 
     .fixed-keys {
@@ -203,7 +221,8 @@
         for (let i = 0; i < length; i++) {
             const randomKey = fixedKeys[Math.floor(Math.random() * fixedKeys.length)];
             currentKeys.push(randomKey);
-            html += '<div class="key-circle">' + randomKey + '</div> ';
+            const keyClass = i === 0 ? 'key-circle next-key' : 'key-circle';
+            html += '<div class="' + keyClass + '">' + randomKey + '</div> ';
         }
         keysDisplay.innerHTML = html;
         keyIndex = 0;
@@ -225,7 +244,8 @@
     function updateKeysDisplay() {
         let html = '';
         for (let i = keyIndex; i < currentKeys.length; i++) {
-            html += '<div class="key-circle">' + currentKeys[i] + '</div> ';
+            const keyClass = i === keyIndex ? 'key-circle next-key' : 'key-circle';
+            html += '<div class="' + keyClass + '">' + currentKeys[i] + '</div> ';
         }
         keysDisplay.innerHTML = html;
     }
