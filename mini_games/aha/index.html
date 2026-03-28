@@ -37,8 +37,8 @@
         <!-- ここにコードを！ -->
 　　<div id="instruction-screen" class="screen" style="display: flex;">
         <div class="card">
-            <h1 style="color: red;">協力！！　キーの役割決めよう！</h1>
-            <h2> 薬草を混ぜてポーションを作ろう</h2>
+            <h1 style="color: rgb(0, 0, 0);">協力！！キーの役割決めよう！</h1>
+            <h2> 順番に押してポーションを作ろう</h2>
             <div class="moji">
                 
                 <!-- ゲームは60
@@ -47,8 +47,8 @@
 
                 
                 <div class="score-table">
-                    <p style="font-size: 1.5em;"> <strong>表示されるキーは<span style="color: red;">A、D、G、J、L</span>固定だよ。みんなで役割をきめてみてね</strong></p>
-                    <p style="font-size: 1.5em;"> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
+                    <p style="font-size: 1.5em;"> <strong>表示されるキーは <span class="fixed-keys">A / D / G / J / L</span> 固定だよ。みんなで役割をきめてみてね</strong></p>
+                    
                     
                 </div>
                <p style="font-size: 1.5em;"><strong> 制限時間は 60秒 です</strong></p>
@@ -75,7 +75,7 @@
                 <!-- ゲームは60秒で終わる -->
                <div class="score-table">
 
-                     <p> <strong>表示されるキーは<span style="color: red;">A、D、G、J、L</span>固定だよ。みんなで役割をきめてみてね</strong></p>
+                   <p> <strong>表示されるキーは <span class="fixed-keys">A / D / G / J / L</span> 固定だよ。みんなで役割をきめてみてね</strong></p>
 
                      <p> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
                     
@@ -157,6 +157,20 @@
         align-items: center;
         font-size: 36px;
         margin: 5px;
+    }
+
+    .fixed-keys {
+        display: inline-block;
+        padding: 0.2em 0.55em;
+        margin: 0 0.2em;
+        border-radius: 0.45em;
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid rgba(220, 20, 60, 0.35);
+        color: #111;
+        font-size: 1.2em;
+        letter-spacing: 0.08em;
+        line-height: 1.35;
+        white-space: nowrap;
     }
 </style>
 
