@@ -36,42 +36,49 @@
     <!-- 開始画面 最初は表示する-->
     <div id="start-screen" class="screen">
         <!-- ここにコードを！ -->
-       
-    
-    <!-- 説明画面 最初は非表示-->
-    
+
+
+        <!-- 説明画面 最初は非表示-->
+
         <!-- ここにコードを！ -->
-         <div id="instruction-screen" class="screen" style="display: flex;">
-        <div class="card">
-            <h2> 暗号を解読し、宝箱を開けよう</h2>
-            <div class="moji">
-                
-                <!-- ゲームは30秒で終わる -->
-                <p> 制限時間は <strong>30秒</strong> です</p>
-                
-                <div class="score-table">
-                    <p> <strong> HIT</strong>:数字も場所も当たっている</p>
-                    <p><strong>BLOW</strong>:数字は当たってるけど、場所が違う</p>
-                    <p><strong>HI</strong>:５～９の数字が当てはまる</p>
-                     <p><strong>LOW</strong>:０～４の数字が当てはまる</p>
+        <div id="instruction-screen" class="screen" style="display: flex;">
+            <div class="card">
+                <h2> 暗号を解読し、宝箱を開けよう</h2>
+                <div class="moji">
+
+                    <!-- ゲームは30秒で終わる -->
+                    <p> 制限時間は <strong>30秒</strong> です</p>
+
+                    <div class="score-table">
+                        <p> <strong> HIT</strong>:数字も場所も当たっている</p>
+                        <p><strong>BLOW</strong>:数字は当たってるけど、場所が違う</p>
+                        <p><strong>HI</strong>:５～９の数字が当てはまる</p>
+                        <p><strong>LOW</strong>:０～４の数字が当てはまる</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-    
+
     <!-- ゲーム画面 最初は非表示-->
     <div id="game-screen" class="screen" style="display: none;">
         <!-- Boxes (vertical) and system placed side-by-side -->
         <div class="boxes">
-            <div class="code1"><p>?</p></div>
-            <div class="code2"><p>?</p></div>
-            <div class="code3"><p>?</p></div>
+            <div class="code1">
+                <p>?</p>
+            </div>
+            <div class="code2">
+                <p>?</p>
+            </div>
+            <div class="code3">
+                <p>?</p>
+            </div>
         </div>
 
         <div class="system">
             <div class="controls" style="display:flex;align-items:center;gap:8px;">
-                <input id="guess-input" placeholder="3桁(重複なし)" maxlength="3" style="width:200px;padding:12px;font-size:18px;" />
+                <input id="guess-input" placeholder="3桁(重複なし)" maxlength="3"
+                    style="width:200px;padding:12px;font-size:18px;" />
                 <button id="guess-btn" style="padding:10px 14px;font-size:18px;">判定</button>
                 <div id="timer" style="margin-left:12px;font-weight:700;font-size:18px;">30s</div>
             </div>
@@ -82,8 +89,8 @@
         <!-- 成功時のオーバーレイ画像（初期は非表示） -->
         <img id="success-img" src="./data/解除成功.png" alt="解除成功" style="display:none;" />
 
-         
-        
+
+
 
 
 
@@ -171,7 +178,7 @@
         if (guessBtn()) guessBtn().onclick = handleGuess;
         if (guessInput()) {
             // Enterで判定できるようにする
-            guessInput().onkeydown = function(e) {
+            guessInput().onkeydown = function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     handleGuess();
@@ -230,7 +237,7 @@
     // 初期表示: 各桁を LOW/HI で表示する (0-4 => LOW, 5-9 => HI)
     function displayLowHiAll() {
         for (let i = 0; i < 3; i++) {
-            const box = document.querySelector(`.code${i+1} p`);
+            const box = document.querySelector(`.code${i + 1} p`);
             if (!box) continue;
             const secChar = secret[i];
             const cat = (Number(secChar) <= 4) ? 'LOW' : 'HI';
@@ -269,6 +276,6 @@
 <!-- サーバーとの通信用 -->
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <!-- いろいろな設定用 -->
-<script src="/control.js" defer></script>
+<script src="https://we2026b2.sawayuki.com/control.js" defer></script>
 
 </html>
