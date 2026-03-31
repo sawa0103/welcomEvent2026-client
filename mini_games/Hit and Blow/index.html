@@ -121,8 +121,8 @@
         <!-- 成功時のオーバーレイ画像（初期は非表示） -->
         <img id="success-img" src="./data/解除成功.png" alt="解除成功" style="display:none;" />
 
-         
-        
+
+
 
 
 
@@ -221,7 +221,7 @@
         if (guessBtn()) guessBtn().onclick = handleGuess;
         if (guessInput()) {
             // Enterで判定できるようにする
-            guessInput().onkeydown = function(e) {
+            guessInput().onkeydown = function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     handleGuess();
@@ -282,7 +282,7 @@
     // 初期表示: 各桁を LOW/HI で表示する (0-4 => LOW, 5-9 => HI)
     function displayLowHiAll() {
         for (let i = 0; i < 3; i++) {
-            const box = document.querySelector(`.code${i+1} p`);
+            const box = document.querySelector(`.code${i + 1} p`);
             if (!box) continue;
             const secChar = secret[i];
             const cat = (Number(secChar) <= 4) ? 'LOW' : 'HI';
@@ -324,6 +324,6 @@
 <!-- サーバーとの通信用 -->
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <!-- いろいろな設定用 -->
-<script src="https://we2026_statics.sawayuki.com/control.js" defer></script>
+<script src="https://we2026b2.sawayuki.com/control.js" defer></script>
 
 </html>
