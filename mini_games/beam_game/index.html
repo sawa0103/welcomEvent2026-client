@@ -472,7 +472,45 @@
       /* ===== ゲーム定数 ===== */
       const ROWS = 6; // ゲーム画面のレーン数
       const PORTS = 8; // ビーム発射ポート数
-      const KEY_LABELS = ["A", "S", "D", "F", "J", "K", "L", ";"]; // 各ポートに対応するキー
+      const KEY_LABELS = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z",
+      ]; // 使用可能なキーラベルのプール
+      let activeKeyLabels = [];
       const COOLDOWN = 2000; // ビーム発射のクールタイム（ミリ秒）
 
       /* ===== ゲーム状態管理 ===== */
@@ -497,12 +535,22 @@
       }
 
       /**
-       * ポート表示のキーラベルを現在の KEY_LABELS で更新する
+       * KEY_LABELS プールから現在のポート数分のキーをランダムに選ぶ
+       * @returns {string[]}
+       */
+      function getRandomPortKeys() {
+        const keys = [...KEY_LABELS];
+        shuffleArray(keys);
+        return keys.slice(0, PORTS);
+      }
+
+      /**
+       * ポート表示のキーラベルを現在の activeKeyLabels で更新する
        */
       function updatePortLabels() {
         portEls.forEach((port, index) => {
           const label = port.querySelector(".port-key");
-          if (label) label.textContent = KEY_LABELS[index];
+          if (label) label.textContent = activeKeyLabels[index];
         });
       }
 
@@ -699,8 +747,8 @@
        * PORTS 基の銃を均等に横並びで配置する
        */
       function initPorts() {
-        // 初期化時もキーをランダムにする
-        shuffleArray(KEY_LABELS);
+        // 有効キーをランダムに選択する
+        activeKeyLabels = getRandomPortKeys();
         // 1ポートあたりの横幅を算出
         const w = gameScreen.clientWidth / PORTS;
 
@@ -714,7 +762,7 @@
           // 銃SVG・キーラベル・クールタイムバーを内包する
           port.innerHTML =
             gunSVG(false) +
-            `<div class="port-key">${KEY_LABELS[i]}</div>` +
+            `<div class="port-key">${activeKeyLabels[i]}</div>` +
             `<div class="cooldown-bar"><div class="cooldown-fill" id="cd-${i}"></div></div>`;
 
           gameScreen.appendChild(port);
@@ -735,10 +783,7 @@
         if (e.repeat) return;
 
         // 押されたキーが何番目のポートに対応するかを特定
-        const idx =
-          e.key === "Enter"
-            ? KEY_LABELS.indexOf("Enter")
-            : KEY_LABELS.indexOf(e.key.toUpperCase());
+        const idx = activeKeyLabels.indexOf(e.key.toUpperCase());
 
         // 対応するポートが見つかればビームを発射
         if (idx !== -1) fireBeam(idx);
@@ -839,8 +884,8 @@
           life: 130, // 生存時間（ミリ秒相当）
         });
 
-        // 1回押すごとにキーの割り当てをランダムに変更する
-        shuffleArray(KEY_LABELS);
+        // 1回押すごとにポートのキー割り当てをランダムに変更する
+        activeKeyLabels = getRandomPortKeys();
         updatePortLabels();
       }
 
