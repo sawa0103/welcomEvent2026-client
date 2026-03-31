@@ -35,24 +35,30 @@
     <!-- 開始画面 最初は表示する-->
     <div id="start-screen" class="screen">
         <!-- ここにコードを！ -->
-
-        <div id="instruction-screen" class="screen" style="display: flex;">
+        　　<div id="instruction-screen" class="screen" style="display: flex;">
             <div class="card">
-                <h2> 薬草を混ぜてポーションを作ろう</h2>
+                <h1 style="color: rgb(0, 0, 0);">協力！！キーの役割決めよう！</h1>
+                <h2> 順番に押してポーションを作ろう</h2>
                 <div class="moji">
 
-                    <!-- ゲームは30秒で終わる -->
-                    <p><strong> 制限時間は 30秒 です</strong></p>
+                    <!-- ゲームは60
+                 
+                秒で終わる -->
 
-                    <div class="score-table">
-                        <p> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
-                        <p> <strong>表示されるキーはA、D、G、J、L固定だよ。みんなで役割をきめてみてね</strong></p>
 
-                    </div>
+
+                    <p style="font-size: 1.5em;"> <strong> <span class="fixed-keys">A / D / G / J / L</span>
+                            のキーの中から自分の役割を決めてポーションを作ろう</strong></p>
+
+
+
+
+                    <p style="font-size: 1.5em;"><strong> 制限時間は 60秒 です</strong></p>
                 </div>
             </div>
         </div>
     </div>
+
 
     </div>
 
@@ -68,13 +74,14 @@
                 <h2> 薬草を混ぜてポーションを作ろう</h2>
                 <div class="moji">
 
-                    <!-- ゲームは30秒で終わる -->
-                    <p><strong> 制限時間は 30秒 です</strong></p>
+                    <!-- ゲームは60秒で終わる -->
 
-                    <div class="score-table">
-                        <p> <strong>画面に表示されたキーを順番に押してポーションを作ろう！</strong></p>
 
-                    </div>
+                    <p> <strong><span class="fixed-keys">A / D / G / J / L</span> のキーの中から自分の役割を決めてポーションを作ろう</strong></p>
+
+
+
+                    <p><strong> 制限時間は 60秒 </strong></p>
                 </div>
             </div>
         </div>
@@ -83,11 +90,12 @@
 
     </div>
     <!-- ゲーム画面 最初は非表示-->
+    <div id="countdown">残り時間: 60</div>
     <div id="game-screen" class="screen" style="display: none;">
         <!-- ここにコードを！ -->
         <div id="score">スコア: 0</div>
-        <div id="countdown">残り時間: 30</div>
         <div id="keys">押すキー: </div>
+        <div id="potions"></div>
     </div>
 </body>
 
@@ -99,6 +107,17 @@
         left: 33.33%;
         width: 33.33%;
         font-size: 24px;
+    }
+
+    #countdown {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 28px;
+        font-weight: bold;
+        color: #ffffff;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        z-index: 999;
     }
 
     #keys {
@@ -142,6 +161,46 @@
         align-items: center;
         font-size: 36px;
         margin: 5px;
+        border: 3px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.16);
+        transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+    }
+
+    .key-circle.next-key {
+        background: linear-gradient(135deg, #ffe07a 0%, #ffb74d 100%);
+        border-color: #ff8f00;
+        color: #222;
+        box-shadow: 0 0 0 4px rgba(255, 167, 38, 0.35), 0 10px 18px rgba(0, 0, 0, 0.25);
+        transform: scale(1.1);
+        animation: pulseNextKey 0.9s ease-in-out infinite;
+    }
+
+    @keyframes pulseNextKey {
+        0% {
+            transform: scale(1.1);
+        }
+
+        50% {
+            transform: scale(1.18);
+        }
+
+        100% {
+            transform: scale(1.1);
+        }
+    }
+
+    .fixed-keys {
+        display: inline-block;
+        padding: 0.2em 0.55em;
+        margin: 0 0.2em;
+        border-radius: 0.45em;
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid rgba(220, 20, 60, 0.35);
+        color: #111;
+        font-size: 1.2em;
+        letter-spacing: 0.08em;
+        line-height: 1.35;
+        white-space: nowrap;
     }
 </style>
 
@@ -156,10 +215,13 @@
     let score = 0;
     let currentKeys = [];
     let keyIndex = 0;
+    let potionCount = 0;
     let points = 0;
     let gameTimer; // ゲームタイマー用変数
     let countdownInterval; // カウントダウン用インターバル
-    let timeLeft = 30; // 残り時間
+    let timeLeft = 60; // 残り時間
+    const wrongAnswerSound = new Audio('./クイズ不正解1.mp3');
+    const successSound = new Audio('./ニュースタイトル表示4.mp3');
 
     // ランダムな3～4つのキーを生成（表示は最大4つまで）
     function generateKeys() {
@@ -171,17 +233,31 @@
         for (let i = 0; i < length; i++) {
             const randomKey = fixedKeys[Math.floor(Math.random() * fixedKeys.length)];
             currentKeys.push(randomKey);
-            html += '<div class="key-circle">' + randomKey + '</div> ';
+            const keyClass = i === 0 ? 'key-circle next-key' : 'key-circle';
+            html += '<div class="' + keyClass + '">' + randomKey + '</div> ';
         }
         keysDisplay.innerHTML = html;
         keyIndex = 0;
+    }
+
+    // ポーションを表示
+    function updatePotions() {
+        const potionsDiv = document.getElementById('potions');
+        potionsDiv.innerHTML = '';
+        for (let i = 0; i < potionCount; i++) {
+            const img = document.createElement('img');
+            img.src = './ポーション.png'; // 画像パス
+            img.alt = 'ポーション';
+            potionsDiv.appendChild(img);
+        }
     }
 
     // キーの表示を更新
     function updateKeysDisplay() {
         let html = '';
         for (let i = keyIndex; i < currentKeys.length; i++) {
-            html += '<div class="key-circle">' + currentKeys[i] + '</div> ';
+            const keyClass = i === keyIndex ? 'key-circle next-key' : 'key-circle';
+            html += '<div class="' + keyClass + '">' + currentKeys[i] + '</div> ';
         }
         keysDisplay.innerHTML = html;
     }
@@ -193,14 +269,20 @@
             keyIndex++;
             updateKeysDisplay();
             if (keyIndex === currentKeys.length) {
-                score++;
+                score += 2;
+                potionCount += 1;
                 scoreDisplay.textContent = 'スコア: ' + score;
+                updatePotions();
+                successSound.currentTime = 0;
+                successSound.play().catch(() => { });
                 generateKeys();
             }
         } else {
             // 間違ったらリセット
             keyIndex = 0;
             updateKeysDisplay();
+            wrongAnswerSound.currentTime = 0;
+            wrongAnswerSound.play().catch(() => { });
         }
     }
 
@@ -224,12 +306,14 @@
 
         // ゲーム初期化
         score = 0;
+        potionCount = 0;
         scoreDisplay.textContent = 'スコア: ' + score;
+        updatePotions();
         generateKeys();
         document.addEventListener('keydown', handleKeyPress);
 
         // カウントダウン開始
-        timeLeft = 30;
+        timeLeft = 60;
         document.getElementById('countdown').textContent = '残り時間: ' + timeLeft;
         countdownInterval = setInterval(() => {
             timeLeft--;
@@ -270,5 +354,6 @@
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <!-- いろいろな設定用 -->
 <script src="https://we2026b2.sawayuki.com/control.js" defer></script>
+
 
 </html>
