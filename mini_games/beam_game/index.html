@@ -41,6 +41,9 @@
         flex-direction: column;
         width: 100%;
         height: 100%;
+        max-width: 100vw;
+        max-height: 100vh;
+        padding: 16px;
       }
 
       /* ===== 開始画面スタイル ===== */
@@ -103,14 +106,25 @@
         position: relative;
         width: min(960px, 90vw); /* 最大960px、画面が小さい場合は90vw */
         height: min(640px, 80vh); /* 最大640px、画面が小さい場合は80vh */
-        background: #060e1c;
+        background:
+          radial-gradient(
+            circle at 50% 10%,
+            rgba(0, 120, 220, 0.15),
+            transparent 22%
+          ),
+          radial-gradient(
+            circle at 20% 20%,
+            rgba(0, 255, 255, 0.08),
+            transparent 18%
+          ),
+          #060e1c;
         overflow: hidden; /* 画面外に出た敵・ビームを非表示にする */
-        border-radius: 12px;
-        border: 2px solid #1a3a6a;
-        /* 内側に青みがかった暗がり、外側に青白い光彩を追加 */
+        border-radius: 18px;
+        border: 2px solid rgba(10, 60, 110, 0.9);
         box-shadow:
           inset 0 0 80px rgba(0, 20, 60, 0.8),
-          0 0 40px rgba(0, 100, 255, 0.15);
+          0 0 50px rgba(0, 160, 255, 0.18);
+        padding-bottom: 88px;
       }
 
       /* ゲーム画面上のスキャンライン（モニター風CRTエフェクト）
@@ -191,7 +205,7 @@
 
       /* ===== SF レーザーガン（発射ポート）スタイル ===== */
 
-      /* ビーム発射ポート：ゲーム画面下部に6基を均等に配置する */
+      /* ビーム発射ポート：ゲーム画面下部に8基を均等に配置する */
       .port {
         position: absolute;
         bottom: 10px;
@@ -199,8 +213,9 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 3px;
+        gap: 6px;
         z-index: 15;
+        min-width: 80px;
       }
 
       /* 発射時の銃身反動アニメーション（.fired クラスが付与されたとき発動） */
@@ -222,22 +237,27 @@
 
       /* 銃のSVGサイズ */
       .port svg {
-        width: 56px;
-        height: 40px;
+        width: 72px;
+        height: 48px;
       }
 
       /* 対応キーラベル（例: "A", "D"） */
       .port-key {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
         font-family: "Orbitron", monospace;
-        font-size: 10px;
-        font-weight: 700;
-        color: #00ffff;
-        background: rgba(0, 0, 0, 0.7);
-        border: 1px solid rgba(0, 255, 255, 0.35);
-        border-radius: 3px;
-        padding: 1px 5px;
-        letter-spacing: 1px;
-        text-shadow: 0 0 6px rgba(0, 255, 255, 0.6);
+        font-size: 16px;
+        line-height: 1.1;
+        font-weight: 900;
+        color: #b2f7ff;
+        background: rgba(0, 10, 20, 0.95);
+        border: 1px solid rgba(0, 230, 255, 0.8);
+        border-radius: 6px;
+        padding: 5px 10px;
+        letter-spacing: 1.5px;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.85);
       }
 
       /* クールタイム中はキーラベルを暗くして「使用不可」を表現 */
@@ -249,7 +269,7 @@
 
       /* クールタイムの残量を視覚化するバー（下部に表示） */
       .cooldown-bar {
-        width: 56px;
+        width: 64px;
         height: 3px;
         background: rgba(0, 255, 255, 0.1);
         border-radius: 2px;
@@ -299,19 +319,19 @@
       /* 左上に固定表示するスコアHUD */
       #score {
         position: absolute;
-        top: 12px;
-        left: 14px;
-        color: #00ffff;
+        top: 14px;
+        left: 16px;
+        color: #e0ffff;
         font-family: "Orbitron", monospace;
-        font-weight: 700;
-        font-size: 1rem;
+        font-weight: 800;
+        font-size: 1.05rem;
         letter-spacing: 2px;
-        text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+        text-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
         z-index: 20;
-        padding: 4px 12px;
-        background: rgba(0, 0, 0, 0.55);
-        border: 1px solid rgba(0, 255, 255, 0.2);
-        border-radius: 6px;
+        padding: 6px 14px;
+        background: rgba(0, 0, 0, 0.72);
+        border: 1px solid rgba(0, 255, 255, 0.28);
+        border-radius: 10px;
       }
 
       /* ===== 爆発エフェクトスタイル ===== */
@@ -374,10 +394,12 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 72px;
-        background: linear-gradient(180deg, #050d1a 0%, #030810 100%);
-        border-top: 2px solid #1a3a6a;
-        box-shadow: 0 -4px 20px rgba(0, 100, 255, 0.1);
+        height: 84px;
+        background: linear-gradient(180deg, #04101f 0%, #02060f 100%);
+        border-top: 2px solid rgba(0, 100, 180, 0.7);
+        box-shadow:
+          inset 0 2px 18px rgba(0, 120, 220, 0.16),
+          0 -4px 28px rgba(0, 100, 255, 0.16);
         z-index: 12;
       }
 
@@ -749,15 +771,20 @@
       function initPorts() {
         // 有効キーをランダムに選択する
         activeKeyLabels = getRandomPortKeys();
-        // 1ポートあたりの横幅を算出
-        const w = gameScreen.clientWidth / PORTS;
+        // 画面左右に余白を作ることで、一番右の人の難易度を緩和する
+        const sideMargin = Math.min(
+          64,
+          Math.max(32, gameScreen.clientWidth * 0.06),
+        );
+        const availableWidth = gameScreen.clientWidth - sideMargin * 2;
+        const w = availableWidth / PORTS;
 
         for (let i = 0; i < PORTS; i++) {
           const port = document.createElement("div");
           port.className = "port";
 
           // ポートを均等に配置（各列の中心に合わせる）
-          port.style.left = (i + 0.5) * w + "px";
+          port.style.left = sideMargin + (i + 0.5) * w + "px";
 
           // 銃SVG・キーラベル・クールタイムバーを内包する
           port.innerHTML =
