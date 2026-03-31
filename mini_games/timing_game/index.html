@@ -1,1240 +1,1255 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SYNC // タイミング協力ゲーム</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --neon-cyan: #00f5ff;
-        --neon-pink: #ff00aa;
-        --neon-yellow: #ffe600;
-        --neon-green: #00ff88;
-        --dark-bg: #05060f;
-        --panel-bg: rgba(8, 10, 28, 0.92);
-        --border-glow: rgba(0, 245, 255, 0.4);
-        --text-main: #e0f0ff;
-        --grid-color: rgba(0, 245, 255, 0.06);
-      }
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNC // タイミング協力ゲーム</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --neon-cyan: #00f5ff;
+      --neon-pink: #ff00aa;
+      --neon-yellow: #ffe600;
+      --neon-green: #00ff88;
+      --dark-bg: #05060f;
+      --panel-bg: rgba(8, 10, 28, 0.92);
+      --border-glow: rgba(0, 245, 255, 0.4);
+      --text-main: #e0f0ff;
+      --grid-color: rgba(0, 245, 255, 0.06);
+    }
 
-      body {
-        background-color: var(--dark-bg);
-        background-image: url("./data/background.png");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100vw;
-        height: 100vh;
-        overflow: hidden;
-        font-family: "Share Tech Mono", monospace;
-      }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-      /* グリッドオーバーレイ */
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background-image:
-          linear-gradient(var(--grid-color) 1px, transparent 1px),
-          linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-        background-size: 40px 40px;
-        pointer-events: none;
-        z-index: 0;
-      }
+    body {
+      background-color: var(--dark-bg);
+      background-image: url("./data/background.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      font-family: "Share Tech Mono", monospace;
+    }
 
-      /* 暗いオーバーレイ */
-      body::after {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background: radial-gradient(
-          ellipse at center,
+    /* グリッドオーバーレイ */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 暗いオーバーレイ */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center,
           transparent 30%,
-          rgba(5, 6, 15, 0.7) 100%
-        );
-        pointer-events: none;
-        z-index: 0;
+          rgba(5, 6, 15, 0.7) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      width: min(520px, 94vw);
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* ============ パネル共通 ============ */
+    .panel {
+      width: 100%;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-glow);
+      border-radius: 4px;
+      box-shadow:
+        0 0 0 1px rgba(0, 245, 255, 0.08),
+        0 0 30px rgba(0, 245, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      padding: 32px 36px;
+    }
+
+    /* ============ 開始画面 ============ */
+    #start-screen {
+      display: flex;
+    }
+
+    .logo-area {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      letter-spacing: 6px;
+      color: var(--neon-cyan);
+      opacity: 0.7;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .logo-title {
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(42px, 10vw, 68px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      color: #fff;
+      line-height: 1;
+      text-shadow:
+        0 0 20px var(--neon-cyan),
+        0 0 60px rgba(0, 245, 255, 0.3);
+    }
+
+    .logo-title span {
+      color: var(--neon-cyan);
+    }
+
+    .logo-slash {
+      color: var(--neon-pink);
+      text-shadow: 0 0 20px var(--neon-pink);
+    }
+
+    .start-desc {
+      text-align: center;
+      font-size: 13px;
+      color: rgba(224, 240, 255, 0.5);
+      line-height: 1.8;
+      margin-bottom: 32px;
+      letter-spacing: 1px;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px 24px;
+      font-family: "Orbitron", sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 3px;
+      border: none;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    .btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover::before {
+      opacity: 1;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--neon-cyan);
+      color: var(--dark-bg);
+      box-shadow:
+        0 0 20px rgba(0, 245, 255, 0.5),
+        0 0 40px rgba(0, 245, 255, 0.2);
+    }
+
+    .btn-primary::before {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-primary:hover {
+      box-shadow:
+        0 0 30px rgba(0, 245, 255, 0.7),
+        0 0 60px rgba(0, 245, 255, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--neon-cyan);
+      border: 1px solid rgba(0, 245, 255, 0.4);
+    }
+
+    .btn-secondary::before {
+      background: rgba(0, 245, 255, 0.08);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--neon-cyan);
+    }
+
+    /* ============ 説明画面 ============ */
+    #instruction-screen {
+      display: none;
+    }
+
+    .inst-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(0, 245, 255, 0.15);
+    }
+
+    .inst-tag {
+      font-family: "Orbitron", sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--dark-bg);
+      background: var(--neon-cyan);
+      padding: 3px 8px;
+      border-radius: 2px;
+    }
+
+    .inst-title {
+      font-family: "Orbitron", sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: 2px;
+    }
+
+    .inst-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .inst-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 12px 16px;
+      background: rgba(0, 245, 255, 0.04);
+      border-left: 2px solid rgba(0, 245, 255, 0.3);
+      border-radius: 0 3px 3px 0;
+    }
+
+    .inst-num {
+      font-family: "Orbitron", sans-serif;
+      font-size: 10px;
+      font-weight: 900;
+      color: var(--neon-cyan);
+      opacity: 0.7;
+      min-width: 20px;
+      padding-top: 1px;
+    }
+
+    .inst-text {
+      font-size: 13px;
+      color: rgba(224, 240, 255, 0.8);
+      line-height: 1.6;
+      letter-spacing: 0.5px;
+    }
+
+    .inst-text strong {
+      color: var(--neon-yellow);
+    }
+
+    .score-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-bottom: 24px;
+    }
+
+    .score-table th {
+      padding: 8px 12px;
+      text-align: left;
+      font-family: "Orbitron", sans-serif;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--neon-cyan);
+      opacity: 0.6;
+      border-bottom: 1px solid rgba(0, 245, 255, 0.15);
+    }
+
+    .score-table td {
+      padding: 8px 12px;
+      color: rgba(224, 240, 255, 0.75);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .score-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .score-perfect {
+      color: var(--neon-cyan) !important;
+      font-weight: bold;
+    }
+
+    .score-good {
+      color: var(--neon-green) !important;
+      font-weight: bold;
+    }
+
+    .score-miss {
+      color: var(--neon-yellow) !important;
+    }
+
+    .score-wrong {
+      color: var(--neon-pink) !important;
+    }
+
+    /* ============ ゲーム画面 ============ */
+    #game-screen {
+      display: none;
+    }
+
+    /* ヘッダー */
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 0 20px 0;
+      width: 100%;
+      border-bottom: 1px solid rgba(0, 245, 255, 0.12);
+      margin-bottom: 24px;
+    }
+
+    .hud-block {
+      text-align: center;
+    }
+
+    .hud-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: rgba(0, 245, 255, 0.5);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .hud-value {
+      font-family: "Orbitron", sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .hud-round-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    .round-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      background: transparent;
+      transition: all 0.3s;
+    }
+
+    .round-dot.done {
+      background: var(--neon-cyan);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 8px var(--neon-cyan);
+    }
+
+    .round-dot.current {
+      border-color: var(--neon-yellow);
+      box-shadow: 0 0 8px var(--neon-yellow);
+      animation: pulseDot 0.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseDot {
+      from {
+        box-shadow: 0 0 4px var(--neon-yellow);
       }
 
-      .screen {
-        position: relative;
-        z-index: 1;
-        width: min(520px, 94vw);
-        flex-direction: column;
-        align-items: center;
-        gap: 0;
-      }
-
-      /* ============ パネル共通 ============ */
-      .panel {
-        width: 100%;
-        background: var(--panel-bg);
-        border: 1px solid var(--border-glow);
-        border-radius: 4px;
+      to {
         box-shadow:
-          0 0 0 1px rgba(0, 245, 255, 0.08),
-          0 0 30px rgba(0, 245, 255, 0.08),
-          inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        padding: 32px 36px;
+          0 0 12px var(--neon-yellow),
+          0 0 20px rgba(255, 230, 0, 0.3);
       }
+    }
 
-      /* ============ 開始画面 ============ */
-      #start-screen {
-        display: flex;
-      }
+    /* フェーズ表示エリア */
+    .phase-area {
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
 
-      .logo-area {
-        text-align: center;
-        margin-bottom: 36px;
-      }
+    .phase-label {
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: rgba(0, 245, 255, 0.45);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
 
-      .logo-sub {
-        font-size: 11px;
-        letter-spacing: 6px;
-        color: var(--neon-cyan);
-        opacity: 0.7;
-        text-transform: uppercase;
-        margin-bottom: 8px;
-      }
+    /* キー表示 */
+    .keys-display {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
 
-      .logo-title {
-        font-family: "Orbitron", sans-serif;
-        font-size: clamp(42px, 10vw, 68px);
-        font-weight: 900;
-        letter-spacing: -2px;
-        color: #fff;
-        line-height: 1;
-        text-shadow:
-          0 0 20px var(--neon-cyan),
-          0 0 60px rgba(0, 245, 255, 0.3);
-      }
+    .key-chip {
+      font-family: "Orbitron", sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--neon-cyan);
+      border-radius: 6px;
+      color: var(--neon-cyan);
+      background: rgba(0, 245, 255, 0.06);
+      box-shadow:
+        0 0 16px rgba(0, 245, 255, 0.25),
+        inset 0 0 16px rgba(0, 245, 255, 0.05);
+      text-transform: uppercase;
+      animation: keyAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
 
-      .logo-title span {
-        color: var(--neon-cyan);
-      }
-
-      .logo-slash {
-        color: var(--neon-pink);
-        text-shadow: 0 0 20px var(--neon-pink);
-      }
-
-      .start-desc {
-        text-align: center;
-        font-size: 13px;
-        color: rgba(224, 240, 255, 0.5);
-        line-height: 1.8;
-        margin-bottom: 32px;
-        letter-spacing: 1px;
-      }
-
-      .btn-group {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .btn {
-        display: block;
-        width: 100%;
-        padding: 14px 24px;
-        font-family: "Orbitron", sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        cursor: pointer;
-        border-radius: 3px;
-        border: none;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.2s;
-      }
-
-      .btn::before {
-        content: "";
-        position: absolute;
-        inset: 0;
+    @keyframes keyAppear {
+      from {
+        transform: scale(0.5);
         opacity: 0;
-        transition: opacity 0.2s;
       }
 
-      .btn:hover::before {
+      to {
+        transform: scale(1);
         opacity: 1;
       }
-      .btn:active {
-        transform: scale(0.98);
+    }
+
+    .key-chip.pressed {
+      background: rgba(0, 245, 255, 0.25);
+      box-shadow: 0 0 24px rgba(0, 245, 255, 0.6);
+    }
+
+    /* 結果表示 */
+    .result-badge {
+      font-family: "Orbitron", sans-serif;
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      animation: resultPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes resultPop {
+      from {
+        transform: scale(0.3) rotate(-5deg);
+        opacity: 0;
       }
 
-      .btn-primary {
-        background: var(--neon-cyan);
-        color: var(--dark-bg);
-        box-shadow:
-          0 0 20px rgba(0, 245, 255, 0.5),
-          0 0 40px rgba(0, 245, 255, 0.2);
+      to {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
       }
-      .btn-primary::before {
-        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .result-badge.perfect {
+      color: var(--neon-cyan);
+      text-shadow:
+        0 0 20px var(--neon-cyan),
+        0 0 60px rgba(0, 245, 255, 0.5);
+    }
+
+    .result-badge.good {
+      color: var(--neon-green);
+      text-shadow:
+        0 0 20px var(--neon-green),
+        0 0 60px rgba(0, 255, 136, 0.5);
+    }
+
+    .result-badge.miss {
+      color: var(--neon-yellow);
+      text-shadow: 0 0 20px var(--neon-yellow);
+    }
+
+    .result-badge.wrong {
+      color: var(--neon-pink);
+      text-shadow: 0 0 20px var(--neon-pink);
+    }
+
+    .result-sub {
+      font-size: 12px;
+      color: rgba(224, 240, 255, 0.5);
+      margin-top: 8px;
+      letter-spacing: 2px;
+    }
+
+    /* ============ タイミングバー ============ */
+    .timing-area {
+      width: 100%;
+    }
+
+    .timing-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .timing-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: rgba(0, 245, 255, 0.4);
+      text-transform: uppercase;
+    }
+
+    .timing-hint {
+      font-size: 11px;
+      color: var(--neon-yellow);
+      animation: blink 0.5s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
       }
-      .btn-primary:hover {
-        box-shadow:
-          0 0 30px rgba(0, 245, 255, 0.7),
-          0 0 60px rgba(0, 245, 255, 0.3);
+    }
+
+    .timing-track {
+      position: relative;
+      height: 48px;
+      background: rgba(0, 245, 255, 0.04);
+      border: 1px solid rgba(0, 245, 255, 0.18);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* ゾーンハイライト */
+    .timing-zone {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background: rgba(0, 245, 255, 0.08);
+      border-left: 1px dashed rgba(0, 245, 255, 0.25);
+      border-right: 1px dashed rgba(0, 245, 255, 0.25);
+      left: 40%;
+      width: 20%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timing-zone-label {
+      font-size: 9px;
+      color: rgba(0, 245, 255, 0.4);
+      letter-spacing: 1px;
+    }
+
+    /* スライダー */
+    .timing-slider {
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      width: 6px;
+      background: var(--neon-cyan);
+      border-radius: 3px;
+      box-shadow:
+        0 0 12px var(--neon-cyan),
+        0 0 24px rgba(0, 245, 255, 0.4);
+      left: 0%;
+      transform: translateX(-50%);
+      transition: none;
+    }
+
+    .timing-slider::before {
+      content: "▼";
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: var(--neon-cyan);
+    }
+
+    /* プレスキー表示エリア */
+    .pressed-keys-area {
+      margin-top: 14px;
+      min-height: 32px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .pressed-key-chip {
+      font-family: "Orbitron", sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      animation: chipPop 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes chipPop {
+      from {
+        transform: scale(0.6);
       }
 
-      .btn-secondary {
-        background: transparent;
-        color: var(--neon-cyan);
-        border: 1px solid rgba(0, 245, 255, 0.4);
+      to {
+        transform: scale(1);
       }
-      .btn-secondary::before {
-        background: rgba(0, 245, 255, 0.08);
-      }
-      .btn-secondary:hover {
-        border-color: var(--neon-cyan);
+    }
+
+    .pressed-key-chip.correct {
+      background: rgba(0, 245, 255, 0.15);
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+
+    .pressed-key-chip.wrong {
+      background: rgba(255, 0, 170, 0.15);
+      border: 1px solid var(--neon-pink);
+      color: var(--neon-pink);
+    }
+
+    /* 待機メッセージ */
+    .wait-message {
+      font-family: "Orbitron", sans-serif;
+      font-size: 14px;
+      letter-spacing: 4px;
+      color: rgba(0, 245, 255, 0.4);
+      animation: breathe 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes breathe {
+      from {
+        opacity: 0.3;
       }
 
-      /* ============ 説明画面 ============ */
-      #instruction-screen {
-        display: none;
+      to {
+        opacity: 0.8;
       }
+    }
 
-      .inst-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 28px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid rgba(0, 245, 255, 0.15);
-      }
-
-      .inst-tag {
-        font-family: "Orbitron", sans-serif;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 3px;
-        color: var(--dark-bg);
-        background: var(--neon-cyan);
-        padding: 3px 8px;
-        border-radius: 2px;
-      }
-
-      .inst-title {
-        font-family: "Orbitron", sans-serif;
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-main);
-        letter-spacing: 2px;
-      }
-
-      .inst-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-bottom: 28px;
-      }
-
-      .inst-item {
-        display: flex;
-        gap: 16px;
-        align-items: flex-start;
-        padding: 12px 16px;
-        background: rgba(0, 245, 255, 0.04);
-        border-left: 2px solid rgba(0, 245, 255, 0.3);
-        border-radius: 0 3px 3px 0;
-      }
-
-      .inst-num {
-        font-family: "Orbitron", sans-serif;
-        font-size: 10px;
-        font-weight: 900;
-        color: var(--neon-cyan);
-        opacity: 0.7;
-        min-width: 20px;
-        padding-top: 1px;
-      }
-
-      .inst-text {
-        font-size: 13px;
-        color: rgba(224, 240, 255, 0.8);
-        line-height: 1.6;
-        letter-spacing: 0.5px;
-      }
-
-      .inst-text strong {
-        color: var(--neon-yellow);
-      }
-
-      .score-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12px;
-        margin-bottom: 24px;
-      }
-      .score-table th {
-        padding: 8px 12px;
-        text-align: left;
-        font-family: "Orbitron", sans-serif;
-        font-size: 9px;
-        letter-spacing: 2px;
-        color: var(--neon-cyan);
-        opacity: 0.6;
-        border-bottom: 1px solid rgba(0, 245, 255, 0.15);
-      }
-      .score-table td {
-        padding: 8px 12px;
-        color: rgba(224, 240, 255, 0.75);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      }
-      .score-table tr:last-child td {
-        border-bottom: none;
-      }
-      .score-perfect {
-        color: var(--neon-cyan) !important;
-        font-weight: bold;
-      }
-      .score-good {
-        color: var(--neon-green) !important;
-        font-weight: bold;
-      }
-      .score-miss {
-        color: var(--neon-yellow) !important;
-      }
-      .score-wrong {
-        color: var(--neon-pink) !important;
-      }
-
-      /* ============ ゲーム画面 ============ */
-      #game-screen {
-        display: none;
-      }
-
-      /* ヘッダー */
-      .game-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 0 20px 0;
-        width: 100%;
-        border-bottom: 1px solid rgba(0, 245, 255, 0.12);
-        margin-bottom: 24px;
-      }
-
-      .hud-block {
-        text-align: center;
-      }
-
-      .hud-label {
-        font-size: 9px;
-        letter-spacing: 3px;
-        color: rgba(0, 245, 255, 0.5);
-        text-transform: uppercase;
-        margin-bottom: 2px;
-      }
-
-      .hud-value {
-        font-family: "Orbitron", sans-serif;
-        font-size: 22px;
-        font-weight: 900;
-        color: var(--text-main);
-      }
-
-      .hud-round-dots {
-        display: flex;
-        gap: 8px;
-        justify-content: center;
-        margin-top: 4px;
-      }
-
-      .round-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        border: 1px solid rgba(0, 245, 255, 0.3);
-        background: transparent;
-        transition: all 0.3s;
-      }
-      .round-dot.done {
-        background: var(--neon-cyan);
-        border-color: var(--neon-cyan);
-        box-shadow: 0 0 8px var(--neon-cyan);
-      }
-      .round-dot.current {
-        border-color: var(--neon-yellow);
-        box-shadow: 0 0 8px var(--neon-yellow);
-        animation: pulseDot 0.8s ease-in-out infinite alternate;
-      }
-
-      @keyframes pulseDot {
-        from {
-          box-shadow: 0 0 4px var(--neon-yellow);
-        }
-        to {
-          box-shadow:
-            0 0 12px var(--neon-yellow),
-            0 0 20px rgba(255, 230, 0, 0.3);
-        }
-      }
-
-      /* フェーズ表示エリア */
-      .phase-area {
-        min-height: 180px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 24px;
-        position: relative;
-      }
-
-      .phase-label {
-        font-size: 10px;
-        letter-spacing: 4px;
-        color: rgba(0, 245, 255, 0.45);
-        text-transform: uppercase;
-        margin-bottom: 16px;
-      }
-
-      /* キー表示 */
-      .keys-display {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-
-      .key-chip {
-        font-family: "Orbitron", sans-serif;
-        font-size: 28px;
-        font-weight: 900;
-        width: 64px;
-        height: 64px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid var(--neon-cyan);
-        border-radius: 6px;
-        color: var(--neon-cyan);
-        background: rgba(0, 245, 255, 0.06);
-        box-shadow:
-          0 0 16px rgba(0, 245, 255, 0.25),
-          inset 0 0 16px rgba(0, 245, 255, 0.05);
-        text-transform: uppercase;
-        animation: keyAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-
-      @keyframes keyAppear {
-        from {
-          transform: scale(0.5);
-          opacity: 0;
-        }
-        to {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-
-      .key-chip.pressed {
-        background: rgba(0, 245, 255, 0.25);
-        box-shadow: 0 0 24px rgba(0, 245, 255, 0.6);
-      }
-
-      /* 結果表示 */
-      .result-badge {
-        font-family: "Orbitron", sans-serif;
-        font-size: 52px;
-        font-weight: 900;
-        letter-spacing: -2px;
-        animation: resultPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-
-      @keyframes resultPop {
-        from {
-          transform: scale(0.3) rotate(-5deg);
-          opacity: 0;
-        }
-        to {
-          transform: scale(1) rotate(0deg);
-          opacity: 1;
-        }
-      }
-
-      .result-badge.perfect {
-        color: var(--neon-cyan);
-        text-shadow:
-          0 0 20px var(--neon-cyan),
-          0 0 60px rgba(0, 245, 255, 0.5);
-      }
-      .result-badge.good {
-        color: var(--neon-green);
-        text-shadow:
-          0 0 20px var(--neon-green),
-          0 0 60px rgba(0, 255, 136, 0.5);
-      }
-      .result-badge.miss {
-        color: var(--neon-yellow);
-        text-shadow: 0 0 20px var(--neon-yellow);
-      }
-      .result-badge.wrong {
-        color: var(--neon-pink);
-        text-shadow: 0 0 20px var(--neon-pink);
-      }
-
-      .result-sub {
-        font-size: 12px;
-        color: rgba(224, 240, 255, 0.5);
-        margin-top: 8px;
-        letter-spacing: 2px;
-      }
-
-      /* ============ タイミングバー ============ */
-      .timing-area {
-        width: 100%;
-      }
-
-      .timing-label-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-      }
-
-      .timing-label {
-        font-size: 9px;
-        letter-spacing: 3px;
-        color: rgba(0, 245, 255, 0.4);
-        text-transform: uppercase;
-      }
-
-      .timing-hint {
-        font-size: 11px;
-        color: var(--neon-yellow);
-        animation: blink 0.5s step-end infinite;
-      }
-
-      @keyframes blink {
-        50% {
-          opacity: 0;
-        }
-      }
-
-      .timing-track {
-        position: relative;
-        height: 48px;
-        background: rgba(0, 245, 255, 0.04);
-        border: 1px solid rgba(0, 245, 255, 0.18);
-        border-radius: 4px;
-        overflow: hidden;
-      }
-
-      /* ゾーンハイライト */
-      .timing-zone {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        background: rgba(0, 245, 255, 0.08);
-        border-left: 1px dashed rgba(0, 245, 255, 0.25);
-        border-right: 1px dashed rgba(0, 245, 255, 0.25);
-        left: 40%;
-        width: 20%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .timing-zone-label {
-        font-size: 9px;
-        color: rgba(0, 245, 255, 0.4);
-        letter-spacing: 1px;
-      }
-
-      /* スライダー */
-      .timing-slider {
-        position: absolute;
-        top: 6px;
-        bottom: 6px;
-        width: 6px;
-        background: var(--neon-cyan);
-        border-radius: 3px;
-        box-shadow:
-          0 0 12px var(--neon-cyan),
-          0 0 24px rgba(0, 245, 255, 0.4);
-        left: 0%;
-        transform: translateX(-50%);
-        transition: none;
-      }
-
-      .timing-slider::before {
-        content: "▼";
-        position: absolute;
-        top: -18px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 10px;
-        color: var(--neon-cyan);
-      }
-
-      /* プレスキー表示エリア */
-      .pressed-keys-area {
-        margin-top: 14px;
-        min-height: 32px;
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .pressed-key-chip {
-        font-family: "Orbitron", sans-serif;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 4px 10px;
-        border-radius: 3px;
-        text-transform: uppercase;
-        animation: chipPop 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-
-      @keyframes chipPop {
-        from {
-          transform: scale(0.6);
-        }
-        to {
-          transform: scale(1);
-        }
-      }
-
-      .pressed-key-chip.correct {
-        background: rgba(0, 245, 255, 0.15);
-        border: 1px solid var(--neon-cyan);
-        color: var(--neon-cyan);
-      }
-
-      .pressed-key-chip.wrong {
-        background: rgba(255, 0, 170, 0.15);
-        border: 1px solid var(--neon-pink);
-        color: var(--neon-pink);
-      }
-
-      /* 待機メッセージ */
-      .wait-message {
-        font-family: "Orbitron", sans-serif;
-        font-size: 14px;
-        letter-spacing: 4px;
-        color: rgba(0, 245, 255, 0.4);
-        animation: breathe 1.5s ease-in-out infinite alternate;
-      }
-
-      @keyframes breathe {
-        from {
-          opacity: 0.3;
-        }
-        to {
-          opacity: 0.8;
-        }
-      }
-
-      /* スキャンライン */
-      .scanline {
-        position: fixed;
-        inset: 0;
-        background: repeating-linear-gradient(
-          0deg,
+    /* スキャンライン */
+    .scanline {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg,
           transparent,
           transparent 2px,
           rgba(0, 0, 0, 0.08) 2px,
-          rgba(0, 0, 0, 0.08) 4px
-        );
-        pointer-events: none;
-        z-index: 100;
-      }
+          rgba(0, 0, 0, 0.08) 4px);
+      pointer-events: none;
+      z-index: 100;
+    }
 
-      /* コーナーデコ */
-      .corner-deco {
-        position: absolute;
-        width: 12px;
-        height: 12px;
-      }
-      .corner-deco.tl {
-        top: 0;
-        left: 0;
-        border-top: 2px solid var(--neon-cyan);
-        border-left: 2px solid var(--neon-cyan);
-      }
-      .corner-deco.tr {
-        top: 0;
-        right: 0;
-        border-top: 2px solid var(--neon-cyan);
-        border-right: 2px solid var(--neon-cyan);
-      }
-      .corner-deco.bl {
-        bottom: 0;
-        left: 0;
-        border-bottom: 2px solid var(--neon-cyan);
-        border-left: 2px solid var(--neon-cyan);
-      }
-      .corner-deco.br {
-        bottom: 0;
-        right: 0;
-        border-bottom: 2px solid var(--neon-cyan);
-        border-right: 2px solid var(--neon-cyan);
-      }
-    </style>
-  </head>
+    /* コーナーデコ */
+    .corner-deco {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+    }
 
-  <body>
-    <div class="scanline"></div>
+    .corner-deco.tl {
+      top: 0;
+      left: 0;
+      border-top: 2px solid var(--neon-cyan);
+      border-left: 2px solid var(--neon-cyan);
+    }
 
-    <!-- 開始画面 -->
-    <div id="start-screen" class="screen">
-      <div class="panel" style="position: relative">
-        <div class="corner-deco tl"></div>
-        <div class="corner-deco tr"></div>
-        <div class="corner-deco bl"></div>
-        <div class="corner-deco br"></div>
+    .corner-deco.tr {
+      top: 0;
+      right: 0;
+      border-top: 2px solid var(--neon-cyan);
+      border-right: 2px solid var(--neon-cyan);
+    }
 
-        <div class="logo-area">
-          <div class="logo-sub">// Multiplayer Timing Game</div>
-          <div class="logo-title">
-            SY<span>N</span><span class="logo-slash">//</span>C
-          </div>
-        </div>
+    .corner-deco.bl {
+      bottom: 0;
+      left: 0;
+      border-bottom: 2px solid var(--neon-cyan);
+      border-left: 2px solid var(--neon-cyan);
+    }
 
-        <div class="start-desc">
-          提示されたキーを全員で<br />
-          完全に同時に押せ。
-        </div>
+    .corner-deco.br {
+      bottom: 0;
+      right: 0;
+      border-bottom: 2px solid var(--neon-cyan);
+      border-right: 2px solid var(--neon-cyan);
+    }
+  </style>
+</head>
 
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="instruction()">
-            HOW TO PLAY
-          </button>
-          <button class="btn btn-secondary" onclick="gameStart()">
-            START GAME
-          </button>
+<body>
+  <div class="scanline"></div>
+
+  <!-- 開始画面 -->
+  <div id="start-screen" class="screen">
+    <div class="panel" style="position: relative">
+      <div class="corner-deco tl"></div>
+      <div class="corner-deco tr"></div>
+      <div class="corner-deco bl"></div>
+      <div class="corner-deco br"></div>
+
+      <div class="logo-area">
+        <div class="logo-sub">// Multiplayer Timing Game</div>
+        <div class="logo-title">
+          SY<span>N</span><span class="logo-slash">//</span>C
         </div>
       </div>
-    </div>
 
-    <!-- 説明画面 -->
-    <div id="instruction-screen" class="screen">
-      <div class="panel" style="position: relative">
-        <div class="corner-deco tl"></div>
-        <div class="corner-deco tr"></div>
-        <div class="corner-deco bl"></div>
-        <div class="corner-deco br"></div>
+      <div class="start-desc">
+        提示されたキーを全員で<br />
+        完全に同時に押せ。
+      </div>
 
-        <div class="inst-header">
-          <span class="inst-tag">MANUAL</span>
-          <span class="inst-title">ゲームルール</span>
-        </div>
-
-        <div class="inst-list">
-          <div class="inst-item">
-            <div class="inst-num">01</div>
-            <div class="inst-text">
-              ランダムに<strong>3〜6個のキー</strong>が表示される（2秒）
-            </div>
-          </div>
-          <div class="inst-item">
-            <div class="inst-num">02</div>
-            <div class="inst-text">
-              キーが消えたあと、<strong>バーが動く</strong>。中央ゾーンで押すのが理想
-            </div>
-          </div>
-          <div class="inst-item">
-            <div class="inst-num">03</div>
-            <div class="inst-text">
-              <strong>全員が同じタイミング</strong
-              >で指定キーを押す（余計なキー不可）
-            </div>
-          </div>
-          <div class="inst-item">
-            <div class="inst-num">04</div>
-            <div class="inst-text">
-              <strong>5ラウンド</strong>繰り返し、合計スコアを競う
-            </div>
-          </div>
-        </div>
-
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="gameStart()">
-            START GAME
-          </button>
-          <button class="btn btn-secondary" onclick="backToStart()">
-            ← BACK
-          </button>
-        </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="instruction()">
+          HOW TO PLAY
+        </button>
+        <button class="btn btn-secondary" onclick="gameStart()">
+          START GAME
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- ゲーム画面 -->
-    <div id="game-screen" class="screen">
-      <div class="panel" style="position: relative; padding: 24px 28px">
-        <div class="corner-deco tl"></div>
-        <div class="corner-deco tr"></div>
-        <div class="corner-deco bl"></div>
-        <div class="corner-deco br"></div>
+  <!-- 説明画面 -->
+  <div id="instruction-screen" class="screen">
+    <div class="panel" style="position: relative">
+      <div class="corner-deco tl"></div>
+      <div class="corner-deco tr"></div>
+      <div class="corner-deco bl"></div>
+      <div class="corner-deco br"></div>
 
-        <!-- ヘッダー -->
-        <div class="game-header">
-          <div class="hud-block">
-            <div class="hud-label">SCORE</div>
-            <div class="hud-value" id="score-display">000</div>
-          </div>
-          <div class="hud-block">
-            <div class="hud-label">ROUND</div>
-            <div class="hud-round-dots">
-              <div class="round-dot" id="dot-1"></div>
-              <div class="round-dot" id="dot-2"></div>
-              <div class="round-dot" id="dot-3"></div>
-              <div class="round-dot" id="dot-4"></div>
-              <div class="round-dot" id="dot-5"></div>
-            </div>
-          </div>
-          <div class="hud-block">
-            <div class="hud-label">PHASE</div>
-            <div
-              class="hud-value"
-              id="phase-display"
-              style="font-size: 13px; letter-spacing: 2px"
-            >
-              ---
-            </div>
+      <div class="inst-header">
+        <span class="inst-tag">MANUAL</span>
+        <span class="inst-title">ゲームルール</span>
+      </div>
+
+      <div class="inst-list">
+        <div class="inst-item">
+          <div class="inst-num">01</div>
+          <div class="inst-text">
+            ランダムに<strong>3〜6個のキー</strong>が表示される（2秒）
           </div>
         </div>
-
-        <!-- フェーズエリア -->
-        <div class="phase-area">
-          <div class="phase-label" id="phase-label-text">INITIALIZING</div>
-          <div class="keys-display" id="keys-display">
-            <div class="wait-message" id="wait-msg">READY</div>
-          </div>
-          <div
-            id="result-area"
-            style="display: none; flex-direction: column; align-items: center"
-          >
-            <div class="result-badge" id="result-badge">PERFECT</div>
-            <div class="result-sub" id="result-sub">+35 pts</div>
+        <div class="inst-item">
+          <div class="inst-num">02</div>
+          <div class="inst-text">
+            キーが消えたあと、<strong>バーが動く</strong>。中央ゾーンで押すのが理想
           </div>
         </div>
-
-        <!-- タイミングバー -->
-        <div class="timing-area">
-          <div class="timing-label-row">
-            <span class="timing-label">TIMING BAR</span>
-            <span class="timing-hint" id="timing-hint" style="display: none"
-              >PRESS NOW !</span
-            >
+        <div class="inst-item">
+          <div class="inst-num">03</div>
+          <div class="inst-text">
+            <strong>全員が同じタイミング</strong>で指定キーを押す（余計なキー不可）
           </div>
-          <div class="timing-track">
-            <div class="timing-zone">
-              <span class="timing-zone-label">ZONE</span>
-            </div>
-            <div class="timing-slider" id="timing-slider"></div>
+        </div>
+        <div class="inst-item">
+          <div class="inst-num">04</div>
+          <div class="inst-text">
+            <strong>5ラウンド</strong>繰り返し、合計スコアを競う
           </div>
-          <div class="pressed-keys-area" id="pressed-keys-area"></div>
         </div>
       </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="gameStart()">
+          START GAME
+        </button>
+        <button class="btn btn-secondary" onclick="backToStart()">
+          ← BACK
+        </button>
+      </div>
     </div>
+  </div>
 
-    <style>
-      /* ゲームフラッシュ */
-      @keyframes flashScreen {
-        0%,
-        100% {
-          opacity: 1;
+  <!-- ゲーム画面 -->
+  <div id="game-screen" class="screen">
+    <div class="panel" style="position: relative; padding: 24px 28px">
+      <div class="corner-deco tl"></div>
+      <div class="corner-deco tr"></div>
+      <div class="corner-deco bl"></div>
+      <div class="corner-deco br"></div>
+
+      <!-- ヘッダー -->
+      <div class="game-header">
+        <div class="hud-block">
+          <div class="hud-label">SCORE</div>
+          <div class="hud-value" id="score-display">000</div>
+        </div>
+        <div class="hud-block">
+          <div class="hud-label">ROUND</div>
+          <div class="hud-round-dots">
+            <div class="round-dot" id="dot-1"></div>
+            <div class="round-dot" id="dot-2"></div>
+            <div class="round-dot" id="dot-3"></div>
+            <div class="round-dot" id="dot-4"></div>
+            <div class="round-dot" id="dot-5"></div>
+          </div>
+        </div>
+        <div class="hud-block">
+          <div class="hud-label">PHASE</div>
+          <div class="hud-value" id="phase-display" style="font-size: 13px; letter-spacing: 2px">
+            ---
+          </div>
+        </div>
+      </div>
+
+      <!-- フェーズエリア -->
+      <div class="phase-area">
+        <div class="phase-label" id="phase-label-text">INITIALIZING</div>
+        <div class="keys-display" id="keys-display">
+          <div class="wait-message" id="wait-msg">READY</div>
+        </div>
+        <div id="result-area" style="display: none; flex-direction: column; align-items: center">
+          <div class="result-badge" id="result-badge">PERFECT</div>
+          <div class="result-sub" id="result-sub">+35 pts</div>
+        </div>
+      </div>
+
+      <!-- タイミングバー -->
+      <div class="timing-area">
+        <div class="timing-label-row">
+          <span class="timing-label">TIMING BAR</span>
+          <span class="timing-hint" id="timing-hint" style="display: none">PRESS NOW !</span>
+        </div>
+        <div class="timing-track">
+          <div class="timing-zone">
+            <span class="timing-zone-label">ZONE</span>
+          </div>
+          <div class="timing-slider" id="timing-slider"></div>
+        </div>
+        <div class="pressed-keys-area" id="pressed-keys-area"></div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* ゲームフラッシュ */
+    @keyframes flashScreen {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    .flash {
+      animation: flashScreen 0.1s;
+    }
+  </style>
+
+  <script>
+    // === 要素取得 ===
+    const startScreen = document.getElementById("start-screen");
+    const instructionScreen = document.getElementById("instruction-screen");
+    const gameScreen = document.getElementById("game-screen");
+
+    // === ゲーム状態 ===
+    let currentRound = 0;
+    const maxRounds = 5;
+    let targetKeys = [];
+    let pressedKeys = [];
+    let pressTimes = {};
+    let totalScore = 0;
+    let isPlaying = false;
+    let phase = "idle"; // idle | show | hide | timing | result | end
+    let timingStart = 0;
+    let timingDuration = 2500;
+    let timingAnimId = null;
+    let phaseTimer = null;
+
+    // === 画面切り替え ===
+    function showScreen(screen) {
+      startScreen.style.display = "none";
+      instructionScreen.style.display = "none";
+      gameScreen.style.display = "none";
+      screen.style.display = "flex";
+    }
+
+    function backToStart() {
+      showScreen(startScreen);
+    }
+
+    function instruction() {
+      showScreen(instructionScreen);
+      console.log("[Game] 説明画面を表示");
+    }
+
+    // === ゲーム開始 ===
+    function gameStart() {
+      isPlaying = true;
+      totalScore = 0;
+      currentRound = 0;
+
+      showScreen(gameScreen);
+      updateScoreDisplay();
+      updateDots();
+
+      clearTimeout(phaseTimer);
+      cancelAnimationFrame(timingAnimId);
+
+      phaseTimer = setTimeout(nextRound, 600);
+      console.log("[Game] ゲーム開始！");
+    }
+
+    // === 次ラウンド ===
+    function nextRound() {
+      if (!isPlaying) return;
+      if (currentRound >= maxRounds) {
+        endGame();
+        return;
+      }
+
+      currentRound++;
+      pressedKeys = [];
+      pressTimes = {};
+
+      updateDots();
+      setPhaseDisplay("MEMORIZE");
+
+      // キー生成（3〜6個）
+      const allKeys = "abcdefghijklmnopqrstuvwxyz".split("");
+      const count = Math.floor(Math.random() * 4) + 3;
+      targetKeys = shuffleArray(allKeys).slice(0, count);
+
+      // show フェーズ
+      phase = "show";
+      showKeysPhase();
+    }
+
+    function shuffleArray(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // === フェーズ: キー表示 ===
+    function showKeysPhase() {
+      document.getElementById("result-area").style.display = "none";
+      document.getElementById("wait-msg").style.display = "none";
+      document.getElementById("timing-hint").style.display = "none";
+      document.getElementById("pressed-keys-area").innerHTML = "";
+
+      const kd = document.getElementById("keys-display");
+      kd.innerHTML = "";
+      kd.style.display = "flex";
+
+      targetKeys.forEach((k, i) => {
+        const chip = document.createElement("div");
+        chip.className = "key-chip";
+        chip.textContent = k.toUpperCase();
+        chip.style.animationDelay = `${i * 60}ms`;
+        kd.appendChild(chip);
+      });
+
+      document.getElementById("phase-label-text").textContent =
+        `ROUND ${currentRound} — MEMORIZE KEYS`;
+
+      // 2秒後: 非表示フェーズ
+      phaseTimer = setTimeout(hidePhase, 2000);
+    }
+
+    // === フェーズ: 非表示 ===
+    function hidePhase() {
+      phase = "hide";
+      document.getElementById("keys-display").innerHTML = "";
+      document.getElementById("keys-display").style.display = "none";
+
+      // wait-msg を再作成
+      const kd = document.getElementById("keys-display");
+      const wm = document.createElement("div");
+      wm.className = "wait-message";
+      wm.id = "wait-msg";
+      wm.textContent = "READY...";
+      kd.appendChild(wm);
+      wm.style.display = "block";
+
+      setPhaseDisplay("STANDBY");
+      document.getElementById("phase-label-text").textContent = "GET READY";
+
+      // 1秒後: タイミングフェーズ
+      phaseTimer = setTimeout(startTimingPhase, 1000);
+    }
+
+    // === フェーズ: タイミング ===
+    function startTimingPhase() {
+      console.log("[Game] startTimingPhase -> timing bar start");
+      phase = "timing";
+      pressedKeys = [];
+      pressTimes = {};
+
+      // バー位置を毎ラウンドリセット
+      const slider = document.getElementById("timing-slider");
+      slider.style.left = "0%";
+
+      const wm = document.getElementById("wait-msg");
+      if (wm) {
+        wm.textContent = "PRESS!";
+      }
+      document.getElementById("timing-hint").style.display = "block";
+      setPhaseDisplay("INPUT");
+      document.getElementById("phase-label-text").textContent =
+        `PRESS KEYS: ${targetKeys.map((k) => k.toUpperCase()).join(" + ")}`;
+
+      timingStart = Date.now();
+      animateBar();
+
+      // 2.5秒後: タイムアウト
+      phaseTimer = setTimeout(() => {
+        if (phase === "timing") {
+          endTimingPhase(true);
         }
-        50% {
-          opacity: 0.7;
-        }
-      }
-      .flash {
-        animation: flashScreen 0.1s;
-      }
-    </style>
+      }, timingDuration);
+    }
 
-    <script>
-      // === 要素取得 ===
-      const startScreen = document.getElementById("start-screen");
-      const instructionScreen = document.getElementById("instruction-screen");
-      const gameScreen = document.getElementById("game-screen");
+    function animateBar() {
+      const slider = document.getElementById("timing-slider");
+      function frame() {
+        if (phase !== "timing") return;
+        const elapsed = Date.now() - timingStart;
+        const progress = Math.min((elapsed / timingDuration) * 100, 100);
+        slider.style.left = progress + "%";
+        console.log(`[Game] animateBar: ${progress.toFixed(1)}%`);
 
-      // === ゲーム状態 ===
-      let currentRound = 0;
-      const maxRounds = 5;
-      let targetKeys = [];
-      let pressedKeys = [];
-      let pressTimes = {};
-      let totalScore = 0;
-      let isPlaying = false;
-      let phase = "idle"; // idle | show | hide | timing | result | end
-      let timingStart = 0;
-      let timingDuration = 2500;
-      let timingAnimId = null;
-      let phaseTimer = null;
-
-      // === 画面切り替え ===
-      function showScreen(screen) {
-        startScreen.style.display = "none";
-        instructionScreen.style.display = "none";
-        gameScreen.style.display = "none";
-        screen.style.display = "flex";
-      }
-
-      function backToStart() {
-        showScreen(startScreen);
-      }
-
-      function instruction() {
-        showScreen(instructionScreen);
-        console.log("[Game] 説明画面を表示");
-      }
-
-      // === ゲーム開始 ===
-      function gameStart() {
-        isPlaying = true;
-        totalScore = 0;
-        currentRound = 0;
-
-        showScreen(gameScreen);
-        updateScoreDisplay();
-        updateDots();
-
-        clearTimeout(phaseTimer);
-        cancelAnimationFrame(timingAnimId);
-
-        phaseTimer = setTimeout(nextRound, 600);
-        console.log("[Game] ゲーム開始！");
-      }
-
-      // === 次ラウンド ===
-      function nextRound() {
-        if (!isPlaying) return;
-        if (currentRound >= maxRounds) {
-          endGame();
-          return;
-        }
-
-        currentRound++;
-        pressedKeys = [];
-        pressTimes = {};
-
-        updateDots();
-        setPhaseDisplay("MEMORIZE");
-
-        // キー生成（3〜6個）
-        const allKeys = "abcdefghijklmnopqrstuvwxyz".split("");
-        const count = Math.floor(Math.random() * 4) + 3;
-        targetKeys = shuffleArray(allKeys).slice(0, count);
-
-        // show フェーズ
-        phase = "show";
-        showKeysPhase();
-      }
-
-      function shuffleArray(arr) {
-        const a = [...arr];
-        for (let i = a.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [a[i], a[j]] = [a[j], a[i]];
-        }
-        return a;
-      }
-
-      // === フェーズ: キー表示 ===
-      function showKeysPhase() {
-        document.getElementById("result-area").style.display = "none";
-        document.getElementById("wait-msg").style.display = "none";
-        document.getElementById("timing-hint").style.display = "none";
-        document.getElementById("pressed-keys-area").innerHTML = "";
-
-        const kd = document.getElementById("keys-display");
-        kd.innerHTML = "";
-        kd.style.display = "flex";
-
-        targetKeys.forEach((k, i) => {
-          const chip = document.createElement("div");
-          chip.className = "key-chip";
-          chip.textContent = k.toUpperCase();
-          chip.style.animationDelay = `${i * 60}ms`;
-          kd.appendChild(chip);
-        });
-
-        document.getElementById("phase-label-text").textContent =
-          `ROUND ${currentRound} — MEMORIZE KEYS`;
-
-        // 2秒後: 非表示フェーズ
-        phaseTimer = setTimeout(hidePhase, 2000);
-      }
-
-      // === フェーズ: 非表示 ===
-      function hidePhase() {
-        phase = "hide";
-        document.getElementById("keys-display").innerHTML = "";
-        document.getElementById("keys-display").style.display = "none";
-
-        // wait-msg を再作成
-        const kd = document.getElementById("keys-display");
-        const wm = document.createElement("div");
-        wm.className = "wait-message";
-        wm.id = "wait-msg";
-        wm.textContent = "READY...";
-        kd.appendChild(wm);
-        wm.style.display = "block";
-
-        setPhaseDisplay("STANDBY");
-        document.getElementById("phase-label-text").textContent = "GET READY";
-
-        // 1秒後: タイミングフェーズ
-        phaseTimer = setTimeout(startTimingPhase, 1000);
-      }
-
-      // === フェーズ: タイミング ===
-      function startTimingPhase() {
-        console.log("[Game] startTimingPhase -> timing bar start");
-        phase = "timing";
-        pressedKeys = [];
-        pressTimes = {};
-
-        // バー位置を毎ラウンドリセット
-        const slider = document.getElementById("timing-slider");
-        slider.style.left = "0%";
-
-        const wm = document.getElementById("wait-msg");
-        if (wm) {
-          wm.textContent = "PRESS!";
-        }
-        document.getElementById("timing-hint").style.display = "block";
-        setPhaseDisplay("INPUT");
-        document.getElementById("phase-label-text").textContent =
-          `PRESS KEYS: ${targetKeys.map((k) => k.toUpperCase()).join(" + ")}`;
-
-        timingStart = Date.now();
-        animateBar();
-
-        // 2.5秒後: タイムアウト
-        phaseTimer = setTimeout(() => {
+        if (progress >= 100) {
+          timingAnimId = null;
+          // タイムアウトで自動判定
           if (phase === "timing") {
             endTimingPhase(true);
           }
-        }, timingDuration);
-      }
-
-      function animateBar() {
-        const slider = document.getElementById("timing-slider");
-        function frame() {
-          if (phase !== "timing") return;
-          const elapsed = Date.now() - timingStart;
-          const progress = Math.min((elapsed / timingDuration) * 100, 100);
-          slider.style.left = progress + "%";
-          console.log(`[Game] animateBar: ${progress.toFixed(1)}%`);
-
-          if (progress >= 100) {
-            timingAnimId = null;
-            // タイムアウトで自動判定
-            if (phase === "timing") {
-              endTimingPhase(true);
-            }
-            return;
-          }
-          timingAnimId = requestAnimationFrame(frame);
+          return;
         }
         timingAnimId = requestAnimationFrame(frame);
       }
+      timingAnimId = requestAnimationFrame(frame);
+    }
 
-      // === フェーズ: 入力終了 ===
-      function endTimingPhase(timeout = false) {
-        if (timingAnimId) {
-          cancelAnimationFrame(timingAnimId);
-          timingAnimId = null;
-        }
-        clearTimeout(phaseTimer);
-        phase = "result";
-
-        // 結果表示までバーを最後まで動かす
-        if (timeout) {
-          document.getElementById("timing-slider").style.left = "100%";
-        }
-
-        document.getElementById("timing-hint").style.display = "none";
-        document.getElementById("wait-msg").style.display = "none";
-
-        const roundScore = calcRoundScore(timeout);
-        totalScore += roundScore;
-        updateScoreDisplay();
-
-        showRoundResult(roundScore, timeout);
-
-        phaseTimer = setTimeout(() => {
-          phase = "idle";
-          nextRound();
-        }, 1500);
-      }
-
-      // === スコア計算 ===
-      function calcRoundScore(timeout) {
-        // 正誤判定
-        const pressedSet = new Set(pressedKeys.map((k) => k.toLowerCase()));
-        const targetSet = new Set(targetKeys.map((k) => k.toLowerCase()));
-
-        const isCorrect =
-          pressedSet.size === targetSet.size &&
-          [...targetSet].every((k) => pressedSet.has(k));
-
-        if (!isCorrect && pressedSet.size > 0) return 0; // WRONG
-        if (timeout && pressedSet.size === 0) return 10; // MISS
-
-        const times = Object.values(pressTimes);
-        if (times.length < 2) {
-          // 1人だけの場合
-          if (isCorrect) return 35;
-          return 10;
-        }
-
-        const diff = Math.max(...times) - Math.min(...times);
-        if (diff < 100) return 35; // PERFECT
-        if (diff < 300) return 25; // GOOD
-        return 10; // MISS
-      }
-
-      function getRating(roundScore, timeout) {
-        if (roundScore === 35) return "perfect";
-        if (roundScore === 25) return "good";
-        if (roundScore === 0) return "wrong";
-        return "miss";
-      }
-
-      function getRatingLabel(roundScore) {
-        if (roundScore === 35) return "PERFECT";
-        if (roundScore === 25) return "GOOD";
-        if (roundScore === 0) return "WRONG";
-        return "MISS";
-      }
-
-      function showRoundResult(roundScore, timeout) {
-        setPhaseDisplay("RESULT");
-        document.getElementById("phase-label-text").textContent = "RESULT";
-        document.getElementById("keys-display").style.display = "none";
-
-        const ra = document.getElementById("result-area");
-        ra.style.display = "flex";
-
-        const badge = document.getElementById("result-badge");
-        const sub = document.getElementById("result-sub");
-
-        const rating = getRating(roundScore, timeout);
-        badge.className = `result-badge ${rating}`;
-        badge.textContent = getRatingLabel(roundScore);
-        sub.textContent = roundScore > 0 ? `+${roundScore} pts` : "NO SCORE";
-
-        // 押されたキー表示
-        const pka = document.getElementById("pressed-keys-area");
-        pka.innerHTML = "";
-        const targetSet = new Set(targetKeys.map((k) => k.toLowerCase()));
-        pressedKeys.forEach((k) => {
-          const chip = document.createElement("span");
-          chip.className = `pressed-key-chip ${targetSet.has(k.toLowerCase()) ? "correct" : "wrong"}`;
-          chip.textContent = k.toUpperCase();
-          pka.appendChild(chip);
-        });
-      }
-
-      // === ゲーム終了 ===
-      function endGame() {
-        phase = "end";
-        setPhaseDisplay("FINAL");
-        document.getElementById("phase-label-text").textContent =
-          "GAME COMPLETE";
-
-        document.getElementById("result-area").style.display = "flex";
-        const badge = document.getElementById("result-badge");
-        const sub = document.getElementById("result-sub");
-
-        badge.className = `result-badge ${totalScore >= 90 ? "perfect" : totalScore >= 60 ? "good" : "miss"}`;
-        badge.textContent = `${totalScore}`;
-        sub.textContent = "TOTAL SCORE";
-
-        document.getElementById("keys-display").style.display = "none";
-        document.getElementById("timing-hint").style.display = "none";
-        document.getElementById("wait-msg").style.display = "none";
-        document.getElementById("timing-slider").style.left = "0%";
-
-        // ゲーム終了時に状態リセット (次のゲームで UI が動かない問題を回避)
-        isPlaying = false;
-      }
-
-      function updateScoreDisplay() {
-        const scoreEl = document.getElementById("score-display");
-        if (scoreEl) {
-          scoreEl.textContent = String(totalScore).padStart(3, "0");
-        }
-      }
-
-      function updateDots() {
-        for (let i = 1; i <= 5; i++) {
-          const dot = document.getElementById(`dot-${i}`);
-          dot.className = "round-dot";
-          if (i < currentRound) dot.classList.add("done");
-          else if (i === currentRound) dot.classList.add("current");
-        }
-      }
-
-      function setPhaseDisplay(text) {
-        document.getElementById("phase-display").textContent = text;
-      }
-
-      // === キー入力 ===
-      document.addEventListener("keydown", (e) => {
-        if (!isPlaying) return;
-        if (phase !== "timing") return;
-
-        const key = e.key.toLowerCase();
-        if (key.length !== 1 || !/[a-z]/.test(key)) return;
-
-        if (!pressTimes[key]) {
-          pressTimes[key] = Date.now();
-          pressedKeys.push(key);
-
-          // リアルタイムでキー表示
-          const pka = document.getElementById("pressed-keys-area");
-          const targetSet = new Set(targetKeys.map((k) => k.toLowerCase()));
-          const chip = document.createElement("span");
-          chip.className = `pressed-key-chip ${targetSet.has(key) ? "correct" : "wrong"}`;
-          chip.textContent = key.toUpperCase();
-          pka.appendChild(chip);
-        }
-
-        // 全ターゲットが押されたら終了
-        const pressedSet = new Set(pressedKeys.map((k) => k.toLowerCase()));
-        const targetSet = new Set(targetKeys.map((k) => k.toLowerCase()));
-        if ([...targetSet].every((k) => pressedSet.has(k))) {
-          endTimingPhase(false);
-        }
-      });
-
-      // === gameStop (サーバーから呼ばれる) ===
-      function gameStop() {
-        isPlaying = false;
-        clearTimeout(phaseTimer);
+    // === フェーズ: 入力終了 ===
+    function endTimingPhase(timeout = false) {
+      if (timingAnimId) {
         cancelAnimationFrame(timingAnimId);
-        return Math.min(totalScore, 100);
+        timingAnimId = null;
       }
-    </script>
+      clearTimeout(phaseTimer);
+      phase = "result";
 
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script src="../../control.js" defer></script>
-  </body>
+      // 結果表示までバーを最後まで動かす
+      if (timeout) {
+        document.getElementById("timing-slider").style.left = "100%";
+      }
+
+      document.getElementById("timing-hint").style.display = "none";
+      document.getElementById("wait-msg").style.display = "none";
+
+      const roundScore = calcRoundScore(timeout);
+      totalScore += roundScore;
+      updateScoreDisplay();
+
+      showRoundResult(roundScore, timeout);
+
+      phaseTimer = setTimeout(() => {
+        phase = "idle";
+        nextRound();
+      }, 1500);
+    }
+
+    // === スコア計算 ===
+    function calcRoundScore(timeout) {
+      // 正誤判定
+      const pressedSet = new Set(pressedKeys.map((k) => k.toLowerCase()));
+      const targetSet = new Set(targetKeys.map((k) => k.toLowerCase()));
+
+      const isCorrect =
+        pressedSet.size === targetSet.size &&
+        [...targetSet].every((k) => pressedSet.has(k));
+
+      if (!isCorrect && pressedSet.size > 0) return 0; // WRONG
+      if (timeout && pressedSet.size === 0) return 10; // MISS
+
+      const times = Object.values(pressTimes);
+      if (times.length < 2) {
+        // 1人だけの場合
+        if (isCorrect) return 35;
+        return 10;
+      }
+
+      const diff = Math.max(...times) - Math.min(...times);
+      if (diff < 100) return 35; // PERFECT
+      if (diff < 300) return 25; // GOOD
+      return 10; // MISS
+    }
+
+    function getRating(roundScore, timeout) {
+      if (roundScore === 35) return "perfect";
+      if (roundScore === 25) return "good";
+      if (roundScore === 0) return "wrong";
+      return "miss";
+    }
+
+    function getRatingLabel(roundScore) {
+      if (roundScore === 35) return "PERFECT";
+      if (roundScore === 25) return "GOOD";
+      if (roundScore === 0) return "WRONG";
+      return "MISS";
+    }
+
+    function showRoundResult(roundScore, timeout) {
+      setPhaseDisplay("RESULT");
+      document.getElementById("phase-label-text").textContent = "RESULT";
+      document.getElementById("keys-display").style.display = "none";
+
+      const ra = document.getElementById("result-area");
+      ra.style.display = "flex";
+
+      const badge = document.getElementById("result-badge");
+      const sub = document.getElementById("result-sub");
+
+      const rating = getRating(roundScore, timeout);
+      badge.className = `result-badge ${rating}`;
+      badge.textContent = getRatingLabel(roundScore);
+      sub.textContent = roundScore > 0 ? `+${roundScore} pts` : "NO SCORE";
+
+      // 押されたキー表示
+      const pka = document.getElementById("pressed-keys-area");
+      pka.innerHTML = "";
+      const targetSet = new Set(targetKeys.map((k) => k.toLowerCase()));
+      pressedKeys.forEach((k) => {
+        const chip = document.createElement("span");
+        chip.className = `pressed-key-chip ${targetSet.has(k.toLowerCase()) ? "correct" : "wrong"}`;
+        chip.textContent = k.toUpperCase();
+        pka.appendChild(chip);
+      });
+    }
+
+    // === ゲーム終了 ===
+    function endGame() {
+      phase = "end";
+      setPhaseDisplay("FINAL");
+      document.getElementById("phase-label-text").textContent =
+        "GAME COMPLETE";
+
+      document.getElementById("result-area").style.display = "flex";
+      const badge = document.getElementById("result-badge");
+      const sub = document.getElementById("result-sub");
+
+      badge.className = `result-badge ${totalScore >= 90 ? "perfect" : totalScore >= 60 ? "good" : "miss"}`;
+      badge.textContent = `${totalScore}`;
+      sub.textContent = "TOTAL SCORE";
+
+      document.getElementById("keys-display").style.display = "none";
+      document.getElementById("timing-hint").style.display = "none";
+      document.getElementById("wait-msg").style.display = "none";
+      document.getElementById("timing-slider").style.left = "0%";
+
+      // ゲーム終了時に状態リセット (次のゲームで UI が動かない問題を回避)
+      isPlaying = false;
+    }
+
+    function updateScoreDisplay() {
+      const scoreEl = document.getElementById("score-display");
+      if (scoreEl) {
+        scoreEl.textContent = String(totalScore).padStart(3, "0");
+      }
+    }
+
+    function updateDots() {
+      for (let i = 1; i <= 5; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        dot.className = "round-dot";
+        if (i < currentRound) dot.classList.add("done");
+        else if (i === currentRound) dot.classList.add("current");
+      }
+    }
+
+    function setPhaseDisplay(text) {
+      document.getElementById("phase-display").textContent = text;
+    }
+
+    // === キー入力 ===
+    document.addEventListener("keydown", (e) => {
+      if (!isPlaying) return;
+      if (phase !== "timing") return;
+
+      const key = e.key.toLowerCase();
+      if (key.length !== 1 || !/[a-z]/.test(key)) return;
+
+      if (!pressTimes[key]) {
+        pressTimes[key] = Date.now();
+        pressedKeys.push(key);
+
+        // リアルタイムでキー表示
+        const pka = document.getElementById("pressed-keys-area");
+        const targetSet = new Set(targetKeys.map((k) => k.toLowerCase()));
+        const chip = document.createElement("span");
+        chip.className = `pressed-key-chip ${targetSet.has(key) ? "correct" : "wrong"}`;
+        chip.textContent = key.toUpperCase();
+        pka.appendChild(chip);
+      }
+
+      // 全ターゲットが押されたら終了
+      const pressedSet = new Set(pressedKeys.map((k) => k.toLowerCase()));
+      const targetSet = new Set(targetKeys.map((k) => k.toLowerCase()));
+      if ([...targetSet].every((k) => pressedSet.has(k))) {
+        endTimingPhase(false);
+      }
+    });
+
+    // === gameStop (サーバーから呼ばれる) ===
+    function gameStop() {
+      isPlaying = false;
+      clearTimeout(phaseTimer);
+      cancelAnimationFrame(timingAnimId);
+      return Math.min(totalScore, 100);
+    }
+  </script>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="https://we2026b2.sawayuki.com/control.js" defer></script>
+</body>
+
 </html>
