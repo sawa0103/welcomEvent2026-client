@@ -1001,7 +1001,7 @@
       }
 
       /**
-       * スコア加算時の "+10" ポップアップを生成する関数
+       * スコア加算時の "+2" ポップアップを生成する関数
        * 指定座標から上方向へ浮かび上がりながらフェードアウトする
        * @param {number} x - ポップアップの中心X座標
        * @param {number} y - ポップアップの初期Y座標
@@ -1009,7 +1009,7 @@
       function spawnScorePopup(x, y) {
         const pop = document.createElement("div");
         pop.className = "score-popup";
-        pop.textContent = "+10";
+        pop.textContent = "+2";
         pop.style.left = x - 16 + "px"; // 16px 左にオフセットして文字を中心に見せる
         pop.style.top = y - 14 + "px";
         gameScreen.appendChild(pop);
@@ -1102,7 +1102,7 @@
               enemies.splice(ei, 1);
 
               // スコアを加算して表示を更新（最大100点表示）
-              score += 5;
+              score += 2;
               document.getElementById("score").textContent =
                 "SCORE: " + Math.min(score, 100);
 
