@@ -485,6 +485,27 @@
       let spawnTimer = 0; // 敵生成タイマー（秒）
       let running = false; // ゲーム実行中フラグ
 
+      /**
+       * 配列をシャッフルする汎用関数
+       * @param {Array} arr
+       */
+      function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+      }
+
+      /**
+       * ポート表示のキーラベルを現在の KEY_LABELS で更新する
+       */
+      function updatePortLabels() {
+        portEls.forEach((port, index) => {
+          const label = port.querySelector(".port-key");
+          if (label) label.textContent = KEY_LABELS[index];
+        });
+      }
+
       /* ===== SVG 生成関数 ===== */
 
       /**
@@ -678,6 +699,8 @@
        * PORTS 基の銃を均等に横並びで配置する
        */
       function initPorts() {
+        // 初期化時もキーをランダムにする
+        shuffleArray(KEY_LABELS);
         // 1ポートあたりの横幅を算出
         const w = gameScreen.clientWidth / PORTS;
 
@@ -815,6 +838,10 @@
           x: x, // X座標（衝突判定に使用）
           life: 130, // 生存時間（ミリ秒相当）
         });
+
+        // 1回押すごとにキーの割り当てをランダムに変更する
+        shuffleArray(KEY_LABELS);
+        updatePortLabels();
       }
 
       /* ===== 敵管理 ===== */
