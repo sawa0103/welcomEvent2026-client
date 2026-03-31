@@ -18,62 +18,111 @@
       * { box-sizing: border-box; margin: 0; padding: 0; }
 
       /* 全体背景設定 */
-    body {
-      background-color: #0b162d;
-      /* ./data/background.png が存在する場合はそちらを優先表示 */
-      background-image: url("./data/background.png");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      font-family: "Orbitron", monospace;
-    }
+      body {
+        background-color: #0b162d;
+        /* ./data/background.png が存在する場合はそちらを優先表示 */
+        /* background-image: url("./data/background.png"); */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        font-family: "Orbitron", monospace;
+      }
 
-    /* 画面コンテナ - 中央配置（start / instruction / game 各画面で共用） */
-    .screen {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      width: 100%;
-      height: 100%;
-    }
+      /* 画面コンテナ - 中央配置（start / instruction / game 各画面で共用） */
+      .screen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        max-width: 100vw;
+        max-height: 100vh;
+        padding: 16px;
+      }
 
-    /* ===== 開始画面スタイル ===== */
+      /* ===== 開始画面スタイル ===== */
 
-    /* タイトルテキスト：シアン色のグロー付き、呼吸するようなアニメーション */
-    #start-screen h1 {
-      font-family: "Orbitron", monospace;
-      font-size: clamp(1.4rem,
-          4vw,
-          2.8rem);
-      /* 画面幅に応じてフォントサイズを可変 */
-      color: #00ffff;
-      text-shadow:
-        0 0 20px rgba(0, 255, 255, 0.6),
-        0 0 60px rgba(0, 255, 255, 0.3);
-      text-align: center;
-      letter-spacing: 4px;
-      animation: glowPulse 2s ease-in-out infinite alternate;
-    }
-
-    /* タイトルのグロー強弱アニメーション */
-    @keyframes glowPulse {
-      from {
+      /* タイトルテキスト：シアン色のグロー付き、呼吸するようなアニメーション */
+      #start-screen h1 {
+        font-family: "Orbitron", monospace;
+        font-size: 96px;
+        color: #00ffff;
         text-shadow:
           0 0 10px rgba(0, 255, 255, 0.5),
           0 0 40px rgba(0, 255, 255, 0.2);
       }
 
-      to {
-        text-shadow:
-          0 0 30px rgba(0, 255, 255, 0.9),
-          0 0 80px rgba(0, 255, 255, 0.4);
+      /* タイトルのグロー強弱アニメーション */
+      @keyframes glowPulse {
+        from {
+          text-shadow:
+            0 0 10px rgba(0, 255, 255, 0.5),
+            0 0 40px rgba(0, 255, 255, 0.2);
+        }
+        to {
+          text-shadow:
+            0 0 30px rgba(0, 255, 255, 0.9),
+            0 0 80px rgba(0, 255, 255, 0.4);
+        }
+      }
+
+      /* ===== 説明画面スタイル ===== */
+
+      /* 説明画面：半透明黒背景でテキストを読みやすくする */
+      #instruction-screen {
+        background: rgba(0, 0, 0, 0.85);
+        color: #00ffff;
+        gap: 16px;
+      }
+
+      /* 説明画面の見出し */
+      #instruction-screen h2 {
+        font-size: 1.6rem;
+        letter-spacing: 3px;
+        text-shadow: 0 0 16px rgba(0, 255, 255, 0.6);
+      }
+
+      /* 説明画面の本文テキスト */
+      #instruction-screen p {
+        font-size: 0.85rem;
+        opacity: 0.8;
+        text-align: center;
+        letter-spacing: 1px;
+      }
+
+      /* ===== ゲーム画面スタイル ===== */
+
+      /* ゲーム画面の基本設定：SF風の暗い宇宙空間を表現 */
+      #game-screen {
+        position: relative;
+        width: min(960px, 90vw); /* 最大960px、画面が小さい場合は90vw */
+        height: min(640px, 80vh); /* 最大640px、画面が小さい場合は80vh */
+        background:
+          radial-gradient(
+            circle at 50% 10%,
+            rgba(0, 120, 220, 0.15),
+            transparent 22%
+          ),
+          radial-gradient(
+            circle at 20% 20%,
+            rgba(0, 255, 255, 0.08),
+            transparent 18%
+          ),
+          #060e1c;
+        overflow: hidden; /* 画面外に出た敵・ビームを非表示にする */
+        border-radius: 18px;
+        border: 2px solid rgba(10, 60, 110, 0.9);
+        box-shadow:
+          inset 0 0 80px rgba(0, 20, 60, 0.8),
+          0 0 50px rgba(0, 160, 255, 0.18);
+        padding-bottom: 88px;
       }
     }
 
@@ -167,70 +216,104 @@
 
     /* プレイヤーが発射するレーザービーム
          発射後は CSS アニメーション laserFly で画面上端まで飛んでいく */
-    .beam {
-      position: absolute;
-      bottom: 80px;
-      /* ボトムパネルの上から発射 */
-      width: 4px;
-      border-radius: 2px;
-      /* マゼンタ→シアンのグラデーションでSF風レーザーを表現 */
-      background: linear-gradient(to top, #ff00ff, #00ffff);
-      box-shadow:
-        0 0 8px 3px rgba(0, 255, 255, 0.6),
-        0 0 20px rgba(0, 255, 255, 0.4);
-      animation: laserFly 0.12s linear forwards;
-      z-index: 10;
-      transform: translateX(-50%);
-      /* X座標を銃口の中心に合わせる */
-    }
-
-    /* ビームが下から上へ飛ぶアニメーション */
-    @keyframes laserFly {
-      from {
-        bottom: 80px;
-        height: 0;
-        opacity: 1;
+      .beam {
+        position: absolute;
+        bottom: 80px; /* ボトムパネルの上から発射 */
+        width: 4px;
+        border-radius: 2px;
+        /* マゼンタ→シアンのグラデーションでSF風レーザーを表現 */
+        background: linear-gradient(to top, #ff00ff, #00ffff);
+        box-shadow:
+          0 0 8px 3px rgba(0, 255, 255, 0.6),
+          0 0 20px rgba(0, 255, 255, 0.4);
+        animation: laserFly 0.12s linear forwards;
+        z-index: 10;
+        transform: translateX(-50%); /* X座標を銃口の中心に合わせる */
       }
 
-      to {
-        bottom: 100%;
-        height: 100%;
-        opacity: 0.5;
+      /* ビームが下から上へ飛ぶアニメーション */
+      @keyframes laserFly {
+        from {
+          bottom: 80px;
+          height: 0;
+          opacity: 1;
+        }
+        to {
+          bottom: 100%;
+          height: 100%;
+          opacity: 0.5;
+        }
       }
-    }
 
-    /* ===== SF レーザーガン（発射ポート）スタイル ===== */
+      /* ===== SF レーザーガン（発射ポート）スタイル ===== */
 
-    /* ビーム発射ポート：ゲーム画面下部に6基を均等に配置する */
-    .port {
-      position: absolute;
-      bottom: 10px;
-      transform: translateX(-50%);
-      /* X座標を列の中心に合わせる */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      z-index: 15;
-    }
+      /* ビーム発射ポート：ゲーム画面下部に8基を均等に配置する */
+      .port {
+        position: absolute;
+        bottom: 10px;
+        transform: translateX(-50%); /* X座標を列の中心に合わせる */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        z-index: 15;
+        min-width: 80px;
+      }
 
-    /* 発射時の銃身反動アニメーション（.fired クラスが付与されたとき発動） */
-    .port.fired {
-      animation: gunRecoil 0.12s ease-out;
-    }
+      /* 発射時の銃身反動アニメーション（.fired クラスが付与されたとき発動） */
+      .port.fired {
+        animation: gunRecoil 0.12s ease-out;
+      }
 
-    @keyframes gunRecoil {
-      0% {
-        transform: translateX(-50%) translateY(0);
+      @keyframes gunRecoil {
+        0% {
+          transform: translateX(-50%) translateY(0);
+        }
+        40% {
+          transform: translateX(-50%) translateY(6px);
+        } /* 発射の瞬間に少し下がる */
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+      }
+
+      /* 銃のSVGサイズ */
+      .port svg {
+        width: 72px;
+        height: 48px;
+      }
+
+      /* 対応キーラベル（例: "A", "D"） */
+      .port-key {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        font-family: "Orbitron", monospace;
+        font-size: 16px;
+        line-height: 1.1;
+        font-weight: 900;
+        color: #b2f7ff;
+        background: rgba(0, 10, 20, 0.95);
+        border: 1px solid rgba(0, 230, 255, 0.8);
+        border-radius: 6px;
+        padding: 5px 10px;
+        letter-spacing: 1.5px;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.85);
       }
 
       40% {
         transform: translateX(-50%) translateY(6px);
       }
 
-      /* 発射の瞬間に少し下がる */
-      100% {
-        transform: translateX(-50%) translateY(0);
+      /* クールタイムの残量を視覚化するバー（下部に表示） */
+      .cooldown-bar {
+        width: 64px;
+        height: 3px;
+        background: rgba(0, 255, 255, 0.1);
+        border-radius: 2px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 255, 255, 0.15);
       }
     }
 
@@ -309,44 +392,25 @@
         transform: translate(-50%, -50%) scale(1.5);
         opacity: 0;
       }
-    }
 
-    /* ===== スコア表示スタイル ===== */
+      /* ===== スコア表示スタイル ===== */
 
-    /* 左上に固定表示するスコアHUD */
-    #score {
-      position: absolute;
-      top: 12px;
-      left: 14px;
-      color: #00ffff;
-      font-family: "Orbitron", monospace;
-      font-weight: 700;
-      font-size: 1rem;
-      letter-spacing: 2px;
-      text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
-      z-index: 20;
-      padding: 4px 12px;
-      background: rgba(0, 0, 0, 0.55);
-      border: 1px solid rgba(0, 255, 255, 0.2);
-      border-radius: 6px;
-    }
-
-    /* ===== 爆発エフェクトスタイル ===== */
-
-    /* 的が撃破されたときに表示するSF風爆発。SVGで描画し、拡大しながらフェードアウト */
-    .explosion {
-      position: absolute;
-      pointer-events: none;
-      z-index: 30;
-      transform: translate(-50%, -50%);
-      /* 爆発の中心を座標に合わせる */
-      animation: explode 0.5s ease-out forwards;
-    }
-
-    @keyframes explode {
-      0% {
-        transform: translate(-50%, -50%) scale(0.2);
-        opacity: 1;
+      /* 左上に固定表示するスコアHUD */
+      #score {
+        position: absolute;
+        top: 14px;
+        left: 16px;
+        color: #e0ffff;
+        font-family: "Orbitron", monospace;
+        font-weight: 800;
+        font-size: 1.05rem;
+        letter-spacing: 2px;
+        text-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
+        z-index: 20;
+        padding: 6px 14px;
+        background: rgba(0, 0, 0, 0.72);
+        border: 1px solid rgba(0, 255, 255, 0.28);
+        border-radius: 10px;
       }
 
       55% {
@@ -381,9 +445,21 @@
         opacity: 1;
       }
 
-      100% {
-        transform: translateY(-44px) scale(1.2);
-        opacity: 0;
+      /* ===== ボトムパネルスタイル ===== */
+
+      /* 画面下部の台座パネル。SF風コントロールパネルを表現する */
+      #bottom-panel {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 84px;
+        background: linear-gradient(180deg, #04101f 0%, #02060f 100%);
+        border-top: 2px solid rgba(0, 100, 180, 0.7);
+        box-shadow:
+          inset 0 2px 18px rgba(0, 120, 220, 0.16),
+          0 -4px 28px rgba(0, 100, 255, 0.16);
+        z-index: 12;
       }
     }
 
@@ -413,112 +489,181 @@
       background: linear-gradient(90deg,
           transparent,
           rgba(0, 255, 255, 0.4),
-          transparent);
-    }
-  </style>
-</head>
+          transparent
+        );
+      }
+    </style>
+  </head>
 
-<!-- ページ本体 -->
+  <!-- ページ本体 -->
+  <body>
+    <!-- ===== 画面エリア ===== -->
 
-<body>
-  <!-- ===== 画面エリア ===== -->
+    <!-- 開始画面：ゲーム開始前の初期表示 -->
+    <div id="start-screen" class="screen">
+      <h1>Beam Game</h1>
+    </div>
 
-  <!-- 開始画面：ゲーム開始前の初期表示 -->
-  <div id="start-screen" class="screen">
-    <h1>Beam Game</h1>
-  </div>
+    <!-- 説明画面：ゲームルール説明 -->
+    <div id="instruction-screen" class="screen" style="display: none">
+      <h1>協力してビームを的に当てろ！！</h1>
+    </div>
 
-  <!-- 説明画面：ゲームルール説明 -->
-  <div id="instruction-screen" class="screen" style="display: none">
-    <h1>協力してビームを的に当てろ！！</h1>
-  </div>
+    <!-- ゲーム画面：メインゲーム画面 -->
+    <div id="game-screen" class="screen" style="display: none">
+      <!-- スコア表示エリア（JavaScript で更新される） -->
+      <div id="score">SCORE: 0</div>
+      <!-- ゲーム画面下部の台座パネル（銃のベースとなる土台） -->
+      <div id="bottom-panel"></div>
+    </div>
 
-  <!-- ゲーム画面：メインゲーム画面 -->
-  <div id="game-screen" class="screen" style="display: none">
-    <!-- スコア表示エリア（JavaScript で更新される） -->
-    <div id="score">SCORE: 0</div>
-    <!-- ゲーム画面下部の台座パネル（銃のベースとなる土台） -->
-    <div id="bottom-panel"></div>
-  </div>
+    <!-- ===== ゲームロジック ===== -->
+    <script>
+      /* ===== DOM要素への参照 ===== */
+      const startScreen = document.getElementById("start-screen");
+      const instructionScreen = document.getElementById("instruction-screen");
+      const gameScreen = document.getElementById("game-screen");
 
-  <!-- ===== ゲームロジック ===== -->
-  <script>
-    /* ===== DOM要素への参照 ===== */
-    const startScreen = document.getElementById("start-screen");
-    const instructionScreen = document.getElementById("instruction-screen");
-    const gameScreen = document.getElementById("game-screen");
+      /* ===== 画面遷移関数 ===== */
 
-    /* ===== 画面遷移関数 ===== */
+      /**
+       * 説明画面を表示する関数
+       * サーバーから呼び出される
+       */
+      function instruction() {
+        startScreen.style.display = "none";
+        instructionScreen.style.display = "flex";
+        gameScreen.style.display = "none";
+      }
 
-    /**
-     * 説明画面を表示する関数
-     * サーバーから呼び出される
-     */
-    function instruction() {
-      startScreen.style.display = "none";
-      instructionScreen.style.display = "flex";
-      gameScreen.style.display = "none";
-    }
+      /**
+       * ゲームを開始する関数
+       * サーバーから呼び出される
+       */
+      function gameStart() {
+        startScreen.style.display = "none";
+        instructionScreen.style.display = "none";
+        gameScreen.style.display = "flex";
+        initGame();
+      }
 
-    /**
-     * ゲームを開始する関数
-     * サーバーから呼び出される
-     */
-    function gameStart() {
-      startScreen.style.display = "none";
-      instructionScreen.style.display = "none";
-      gameScreen.style.display = "flex";
-      initGame();
-    }
+      /**
+       * ゲームを停止し、スコアを返す関数
+       * サーバーから呼び出される
+       * @returns {number} スコア（最大100）
+       */
+      function gameStop() {
+        // ゲーム停止フラグを設定してループを止める
+        running = false;
 
-    /**
-     * ゲームを停止し、スコアを返す関数
-     * サーバーから呼び出される
-     * @returns {number} スコア（最大100）
-     */
-    function gameStop() {
-      // ゲーム停止フラグを設定してループを止める
-      running = false;
+        // 開始画面を再表示
+        startScreen.style.display = "flex";
+        instructionScreen.style.display = "none";
+        gameScreen.style.display = "none";
 
-      // 開始画面を再表示
-      startScreen.style.display = "flex";
-      instructionScreen.style.display = "none";
-      gameScreen.style.display = "none";
+        // スコアを返す（最大100）
+        return Math.min(score, 100);
+      }
 
-      // スコアを返す（最大100）
-      return Math.min(score, 100);
-    }
+      /* ===== ゲーム定数 ===== */
+      const ROWS = 6; // ゲーム画面のレーン数
+      const PORTS = 8; // ビーム発射ポート数
+      const KEY_LABELS = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z",
+      ]; // 使用可能なキーラベルのプール
+      let activeKeyLabels = [];
+      const COOLDOWN = 2000; // ビーム発射のクールタイム（ミリ秒）
 
-    /* ===== ゲーム定数 ===== */
-    const ROWS = 6; // ゲーム画面のレーン数
-    const PORTS = 6; // ビーム発射ポート数
-    const KEY_LABELS = ["A", "D", "G", "J", "L", "Enter"]; // 各ポートに対応するキー
-    const COOLDOWN = 2000; // ビーム発射のクールタイム（ミリ秒）
+      /* ===== ゲーム状態管理 ===== */
+      let lastShotTime = {}; // 各ポートの最後の発射時刻（ポート番号→タイムスタンプ）
+      let portEls = []; // 各ポートのDOM要素を格納する配列
+      let enemies = []; // 画面上の敵（的）の配列
+      let beams = []; // 画面上のビームの配列
+      let score = 0; // 現在のスコア
+      let lastTime = 0; // 前回のフレーム時刻（デルタタイム計算用）
+      let spawnTimer = 0; // 敵生成タイマー（秒）
+      let running = false; // ゲーム実行中フラグ
 
-    /* ===== ゲーム状態管理 ===== */
-    let lastShotTime = {}; // 各ポートの最後の発射時刻（ポート番号→タイムスタンプ）
-    let portEls = []; // 各ポートのDOM要素を格納する配列
-    let enemies = []; // 画面上の敵（的）の配列
-    let beams = []; // 画面上のビームの配列
-    let score = 0; // 現在のスコア
-    let lastTime = 0; // 前回のフレーム時刻（デルタタイム計算用）
-    let spawnTimer = 0; // 敵生成タイマー（秒）
-    let running = false; // ゲーム実行中フラグ
+      /**
+       * 配列をシャッフルする汎用関数
+       * @param {Array} arr
+       */
+      function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+      }
 
-    /* ===== SVG 生成関数 ===== */
+      /**
+       * KEY_LABELS プールから現在のポート数分のキーをランダムに選ぶ
+       * @returns {string[]}
+       */
+      function getRandomPortKeys() {
+        const keys = [...KEY_LABELS];
+        shuffleArray(keys);
+        return keys.slice(0, PORTS);
+      }
 
-    /**
-     *
-     * @param {boolean} cooling - true のときクールタイム中の見た目（暗い色）を返す
-     * @returns {string} SVG タグの文字列
-     */
-    function gunSVG(cooling) {
-      // クールタイム中かどうかで色とグロー効果を切り替え
-      const c = cooling ? "#1a5555" : "#00ffff"; // メインカラー（シアン）
-      const body = cooling ? "#0a1a1a" : "#082030"; // 銃本体の色
-      const glow = cooling ? "none" : "drop-shadow(0 0 4px #00ffff)"; // 発光エフェクト
+      /**
+       * ポート表示のキーラベルを現在の activeKeyLabels で更新する
+       */
+      function updatePortLabels() {
+        portEls.forEach((port, index) => {
+          const label = port.querySelector(".port-key");
+          if (label) label.textContent = activeKeyLabels[index];
+        });
+      }
 
-      return `<svg viewBox="0 0 56 40" xmlns="http://www.w3.org/2000/svg">
+      /* ===== SVG 生成関数 ===== */
+
+      /**
+       *
+       * @param {boolean} cooling - true のときクールタイム中の見た目（暗い色）を返す
+       * @returns {string} SVG タグの文字列
+       */
+      function gunSVG(cooling) {
+        // クールタイム中かどうかで色とグロー効果を切り替え
+        const c = cooling ? "#1a5555" : "#00ffff"; // メインカラー（シアン）
+        const body = cooling ? "#0a1a1a" : "#082030"; // 銃本体の色
+        const glow = cooling ? "none" : "drop-shadow(0 0 4px #00ffff)"; // 発光エフェクト
+
+        return `<svg viewBox="0 0 56 40" xmlns="http://www.w3.org/2000/svg">
           <!-- 砲口（バレルの先端・発光部分） -->
           <rect x="0"  y="16" width="8"  height="8" rx="1" fill="${c}" style="filter:${glow}" opacity="0.95"/>
           <!-- バレル（銃身）本体 -->
@@ -717,81 +862,58 @@
         gameScreen.appendChild(port);
         portEls.push(port); // JS から参照できるよう配列にも追加
       }
-    }
 
-    /* ===== キー入力と砲撃 ===== */
+      /**
+       * ビーム発射ポート（レーザーガン）を初期化する関数
+       * PORTS 基の銃を均等に横並びで配置する
+       */
+      function initPorts() {
+        // 有効キーをランダムに選択する
+        activeKeyLabels = getRandomPortKeys();
+        // 画面左右に余白を作ることで、一番右の人の難易度を緩和する
+        const sideMargin = Math.min(
+          64,
+          Math.max(32, gameScreen.clientWidth * 0.06),
+        );
+        const availableWidth = gameScreen.clientWidth - sideMargin * 2;
+        const w = availableWidth / PORTS;
 
-    /**
-     * キー入力イベントリスナー
-     * 押されたキーが KEY_LABELS に含まれていれば対応するポートでビームを発射する
-     */
-    document.addEventListener("keydown", (e) => {
-      // ゲーム実行中でない場合は処理しない
-      if (!running) return;
-      // キーを押し続けたときのリピート入力は無視する
-      if (e.repeat) return;
+        for (let i = 0; i < PORTS; i++) {
+          const port = document.createElement("div");
+          port.className = "port";
 
-      // 押されたキーが何番目のポートに対応するかを特定
-      const idx =
-        e.key === "Enter"
-          ? KEY_LABELS.indexOf("Enter")
-          : KEY_LABELS.indexOf(e.key.toUpperCase());
+          // ポートを均等に配置（各列の中心に合わせる）
+          port.style.left = sideMargin + (i + 0.5) * w + "px";
 
-      // 対応するポートが見つかればビームを発射
-      if (idx !== -1) fireBeam(idx);
-    });
+          // 銃SVG・キーラベル・クールタイムバーを内包する
+          port.innerHTML =
+            gunSVG(false) +
+            `<div class="port-key">${activeKeyLabels[i]}</div>` +
+            `<div class="cooldown-bar"><div class="cooldown-fill" id="cd-${i}"></div></div>`;
 
-    /**
-     * ビームを発射する関数
-     * クールタイム中は発射できない
-     * 発射時に銃の外観変更・クールタイムバーアニメーション・マズルフラッシュも処理する
-     * @param {number} port - ポート番号（0〜5）
-     */
-    function fireBeam(port) {
-      const now = Date.now();
-
-      // ポートの初回射撃時刻を初期化
-      if (!lastShotTime[port]) lastShotTime[port] = 0;
-
-      // クールタイム中なら発射できない
-      if (now - lastShotTime[port] < COOLDOWN) return;
-
-      // 最後の発射時刻を記録
-      lastShotTime[port] = now;
-
-      // 発射音を再生
-      playShot();
-
-      const portEl = portEls[port];
-
-      // --- 銃の反動アニメーション ---
-      // 一度クラスを除去してから再付与し、アニメーションを確実に再トリガーする
-      portEl.classList.remove("fired");
-      void portEl.offsetWidth; // リフローを強制して除去を確定させる
-      portEl.classList.add("fired");
-
-      // クールタイム中の見た目（暗い銃）に切り替える
-      portEl.classList.add("cooling");
-      const svg = portEl.querySelector("svg");
-      if (svg) {
-        // svg タグの属性は維持したまま内部だけを差し替える
-        svg.innerHTML = gunSVG(true)
-          .replace(/^<svg[^>]*>/, "")
-          .replace(/<\/svg>$/, "");
+          gameScreen.appendChild(port);
+          portEls.push(port); // JS から参照できるよう配列にも追加
+        }
       }
 
-      // --- クールタイムバーのアニメーション ---
-      const fill = document.getElementById("cd-" + port);
-      if (fill) {
-        // 発射直後にバーをゼロにリセット（トランジションなし）
-        fill.style.transition = "none";
-        fill.style.transform = "scaleX(0)";
-        // 次のフレームでトランジション付きで満タンまで伸ばす
-        requestAnimationFrame(() => {
-          fill.style.transition = `transform ${COOLDOWN}ms linear`;
-          fill.style.transform = "scaleX(1)";
-        });
-      }
+      /* ===== キー入力と砲撃 ===== */
+
+      /**
+       * キー入力イベントリスナー
+       * 押されたキーが KEY_LABELS に含まれていれば対応するポートでビームを発射する
+       */
+      document.addEventListener("keydown", (e) => {
+        // ゲーム実行中でない場合は処理しない
+        if (!running) return;
+        // キーを押し続けたときのリピート入力は無視する
+        if (e.repeat) return;
+
+        // 押されたキーが何番目のポートに対応するかを特定
+        const idx = activeKeyLabels.indexOf(e.key.toUpperCase());
+
+        // 対応するポートが見つかればビームを発射
+        if (idx !== -1) fireBeam(idx);
+      });
 
       // COOLDOWN ms 後に銃を通常の見た目に戻す
       setTimeout(() => {
@@ -819,81 +941,85 @@
           <!-- ハイライト -->
           <circle cx="14" cy="14" r="3" fill="white"/>
         </svg>`;
-      gameScreen.appendChild(flash);
-      // アニメーション終了後に DOM から削除
-      setTimeout(() => flash.remove(), 200);
+        gameScreen.appendChild(flash);
+        // アニメーション終了後に DOM から削除
+        setTimeout(() => flash.remove(), 200);
 
-      // --- ビーム要素を生成してゲーム画面に追加 ---
-      const beam = document.createElement("div");
-      beam.className = "beam";
-      beam.style.left = x + "px"; // このポートのX座標に配置
-      gameScreen.appendChild(beam);
+        // --- ビーム要素を生成してゲーム画面に追加 ---
+        const beam = document.createElement("div");
+        beam.className = "beam";
+        beam.style.left = x + "px"; // このポートのX座標に配置
+        gameScreen.appendChild(beam);
 
-      // ビーム情報を配列に追加（衝突判定・ライフ管理に使用）
-      beams.push({
-        el: beam, // DOM要素
-        x: x, // X座標（衝突判定に使用）
-        life: 130, // 生存時間（ミリ秒相当）
-      });
-    }
+        // ビーム情報を配列に追加（衝突判定・ライフ管理に使用）
+        beams.push({
+          el: beam, // DOM要素
+          x: x, // X座標（衝突判定に使用）
+          life: 130, // 生存時間（ミリ秒相当）
+        });
 
-    /* ===== 敵管理 ===== */
+        // 1回押すごとにポートのキー割り当てをランダムに変更する
+        activeKeyLabels = getRandomPortKeys();
+        updatePortLabels();
+      }
 
-    /**
-     * 的（敵）を生成しゲーム画面に追加する関数
-     * ランダムなレーンに出現し、ランダムな速度で左へ移動する
-     * 速い的はより濃い色で描画されて視覚的な危険信号を与える
-     */
-    function spawnEnemy() {
-      // ランダムなレーンを選択（0〜ROWS-1）
-      const lane = Math.floor(Math.random() * ROWS);
+      /* ===== 敵管理 ===== */
 
-      // 移動速度をランダムに決定（180〜450 px/秒）
-      const speed = 180 + Math.random() * 270;
+      /**
+       * 的（敵）を生成しゲーム画面に追加する関数
+       * ランダムなレーンに出現し、ランダムな速度で左へ移動する
+       * 速い的はより濃い色で描画されて視覚的な危険信号を与える
+       */
+      function spawnEnemy() {
+        // ランダムなレーンを選択（0〜ROWS-1）
+        const lane = Math.floor(Math.random() * ROWS);
 
-      // 速い的かどうかの閾値（330 px/秒以上を「速い」と判定）
-      const fast = speed > 330;
+        // 移動速度をランダムに決定（180〜450 px/秒）
+        const speed = 180 + Math.random() * 270;
 
-      // 的要素を生成
-      const el = document.createElement("div");
-      el.className = "enemy";
+        // 速い的かどうかの閾値（330 px/秒以上を「速い」と判定）
+        const fast = speed > 330;
 
-      // 的の縦位置：選択されたレーンの中央に配置
-      const laneH = gameScreen.clientHeight / ROWS;
-      const topPos = lane * laneH + laneH / 2 - 24; // 24 = 的の半径
+        // 的要素を生成
+        const el = document.createElement("div");
+        el.className = "enemy";
 
-      el.style.top = topPos + "px";
-      el.style.left = gameScreen.clientWidth + "px"; // 画面右端（画面外）から出現
+        // 的の縦位置：選択されたレーンの中央に配置
+        const laneH = gameScreen.clientHeight / ROWS;
+        const topPos = lane * laneH + laneH / 2 - 24; // 24 = 的の半径
 
-      // 速度に応じた色の的SVGを内部にセット
-      el.innerHTML = targetSVG(fast);
-      gameScreen.appendChild(el);
+        el.style.top = topPos + "px";
+        el.style.left = gameScreen.clientWidth + "px"; // 画面右端（画面外）から出現
 
-      // 敵情報を配列に追加（移動・衝突判定に使用）
-      enemies.push({
-        el, // DOM要素
-        x: gameScreen.clientWidth, // 現在のX座標
-        speed, // 移動速度（px/秒）
-        topPos, // Y座標（衝突判定用に保持）
-      });
-    }
+        // 速度に応じた色の的SVGを内部にセット
+        el.innerHTML = targetSVG(fast);
+        gameScreen.appendChild(el);
 
-    /* ===== VFX（ビジュアルエフェクト）関数 ===== */
+        // 敵情報を配列に追加（移動・衝突判定に使用）
+        enemies.push({
+          el, // DOM要素
+          x: gameScreen.clientWidth, // 現在のX座標
+          speed, // 移動速度（px/秒）
+          topPos, // Y座標（衝突判定用に保持）
+        });
+      }
 
-    /**
-     * 的命中時の爆発エフェクトを生成する関数
-     * シアン×マゼンタのSF風爆発をSVGで描画し、アニメーション終了後に削除する
-     * @param {number} x - 爆発の中心X座標
-     * @param {number} y - 爆発の中心Y座標
-     */
-    function spawnExplosion(x, y) {
-      const exp = document.createElement("div");
-      exp.className = "explosion";
-      exp.style.left = x + "px";
-      exp.style.top = y + "px";
+      /* ===== VFX（ビジュアルエフェクト）関数 ===== */
 
-      // グラデーションIDを座標から生成して重複を防ぐ
-      exp.innerHTML = `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      /**
+       * 的命中時の爆発エフェクトを生成する関数
+       * シアン×マゼンタのSF風爆発をSVGで描画し、アニメーション終了後に削除する
+       * @param {number} x - 爆発の中心X座標
+       * @param {number} y - 爆発の中心Y座標
+       */
+      function spawnExplosion(x, y) {
+        const exp = document.createElement("div");
+        exp.className = "explosion";
+        exp.style.left = x + "px";
+        exp.style.top = y + "px";
+
+        // グラデーションIDを座標から生成して重複を防ぐ
+        exp.innerHTML = `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <radialGradient id="eg${x | 0}">
               <stop offset="0%"   stop-color="#ffffff"/>
@@ -960,32 +1086,21 @@
         spawnEnemy();
       }
 
-      // ゲーム状態を更新（移動・衝突判定など）
-      update(dt);
-
-      // 次フレームをリクエスト
-      requestAnimationFrame(loop);
-    }
-
-    /* ===== ゲーム状態更新 ===== */
-
-    /**
-     * ゲーム状態を更新する関数
-     * 敵の移動・ビームの更新・衝突判定をまとめて処理する
-     * @param {number} dt - デルタタイム（前フレームからの経過秒数）
-     */
-    function update(dt) {
-      // ===== 敵（的）の移動と画面外削除 =====
-      for (let i = enemies.length - 1; i >= 0; i--) {
-        const e = enemies[i];
-        // 敵を左方向に移動（speed は px/秒）
-        e.x -= e.speed * dt;
-        e.el.style.left = e.x + "px";
-        // 敵が画面の左端を完全に通過したら削除
-        if (e.x < -60) {
-          e.el.remove();
-          enemies.splice(i, 1);
-        }
+      /**
+       * スコア加算時の "+2" ポップアップを生成する関数
+       * 指定座標から上方向へ浮かび上がりながらフェードアウトする
+       * @param {number} x - ポップアップの中心X座標
+       * @param {number} y - ポップアップの初期Y座標
+       */
+      function spawnScorePopup(x, y) {
+        const pop = document.createElement("div");
+        pop.className = "score-popup";
+        pop.textContent = "+2";
+        pop.style.left = x - 16 + "px"; // 16px 左にオフセットして文字を中心に見せる
+        pop.style.top = y - 14 + "px";
+        gameScreen.appendChild(pop);
+        // アニメーション終了後（0.7秒）に DOM から削除
+        setTimeout(() => pop.remove(), 700);
       }
 
       // ===== ビームの生存時間更新と消滅 =====
@@ -1030,20 +1145,46 @@
             // 命中音を再生
             playHit();
 
-            // 1ビームで複数の敵を同時に倒さないよう内側のループを抜ける
-            break;
+        // ===== 敵とビームの衝突判定 =====
+        // ビームのX座標±24px の範囲に敵の中心が入っていれば命中と判定する
+        for (let bi = beams.length - 1; bi >= 0; bi--) {
+          const b = beams[bi];
+          const left = b.x - 24; // ビームの左端判定
+          const right = b.x + 24; // ビームの右端判定
+
+          for (let ei = enemies.length - 1; ei >= 0; ei--) {
+            const e = enemies[ei];
+            // 敵のX範囲（e.x 〜 e.x+48）とビームの判定範囲が重なれば命中
+            if (!(e.x + 48 < left || e.x > right)) {
+              // 命中した的の中心座標を算出（エフェクトの配置に使用）
+              const cx = e.x + 24;
+              const cy = e.topPos + 24;
+
+              // 爆発エフェクトとスコアポップアップを生成
+              spawnExplosion(cx, cy);
+              spawnScorePopup(cx, cy);
+
+              // 敵を削除
+              e.el.remove();
+              enemies.splice(ei, 1);
+
+              // スコアを加算して表示を更新（最大100点表示）
+              score += 2;
+              document.getElementById("score").textContent =
+                "SCORE: " + Math.min(score, 100);
+
+              // 命中音を再生
+              playHit();
+
+              // 1ビームで複数の敵を同時に倒さないよう内側のループを抜ける
+              break;
+            }
           }
         }
       }
-    }
-  </script>
+    </script>
 
-  <!-- ===== 外部スクリプト読み込み ===== -->
-  <!-- Socket.IO ライブラリ（サーバー通信用） -->
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <!-- カスタムコントローラースクリプト（サーバーとのやり取りを管理） -->
-  <!-- script src="https://we2026_statics.sawayuki.com/control.js" defer></script> -->
-  <script src="https://we2026b2.sawayuki.com/control.js" defer></script>
-</body>
-
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="/control.js" defer></script>
+  </body>
 </html>
