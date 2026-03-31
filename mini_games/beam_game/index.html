@@ -48,11 +48,7 @@
       /* タイトルテキスト：シアン色のグロー付き、呼吸するようなアニメーション */
       #start-screen h1 {
         font-family: "Orbitron", monospace;
-        font-size: clamp(
-          1.4rem,
-          4vw,
-          2.8rem
-        ); /* 画面幅に応じてフォントサイズを可変 */
+        font-size: 96px;
         color: #00ffff;
         text-shadow:
           0 0 20px rgba(0, 255, 255, 0.6),
@@ -475,8 +471,8 @@
 
       /* ===== ゲーム定数 ===== */
       const ROWS = 6; // ゲーム画面のレーン数
-      const PORTS = 6; // ビーム発射ポート数
-      const KEY_LABELS = ["A", "D", "G", "J", "L", "Enter"]; // 各ポートに対応するキー
+      const PORTS = 8; // ビーム発射ポート数
+      const KEY_LABELS = ["A", "S", "D", "F", "J", "K", "L", ";"]; // 各ポートに対応するキー
       const COOLDOWN = 2000; // ビーム発射のクールタイム（ミリ秒）
 
       /* ===== ゲーム状態管理 ===== */
@@ -1022,7 +1018,7 @@
       }
     </script>
 
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<script src="/control.js" defer></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="/control.js" defer></script>
   </body>
 </html>
