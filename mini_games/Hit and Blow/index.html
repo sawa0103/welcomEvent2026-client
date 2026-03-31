@@ -36,54 +36,97 @@
     <!-- 開始画面 最初は表示する-->
     <div id="start-screen" class="screen">
         <!-- ここにコードを！ -->
-
-
-        <!-- 説明画面 最初は非表示-->
-
-        <!-- ここにコードを！ -->
         <div id="instruction-screen" class="screen" style="display: flex;">
-            <div class="card">
-                <h2> 暗号を解読し、宝箱を開けよう</h2>
+            <div class="card" style="position: relative;">
+
+                <h1>目指せ３HIT！！</h1>
+                <h2 style="font-size: 1.5em;"> 3桁の数列を解読して、宝箱を開けよう！</h2>
+                </h2>
                 <div class="moji">
 
                     <!-- ゲームは30秒で終わる -->
-                    <p> 制限時間は <strong>30秒</strong> です</p>
+
 
                     <div class="score-table">
-                        <p> <strong> HIT</strong>:数字も場所も当たっている</p>
-                        <p><strong>BLOW</strong>:数字は当たってるけど、場所が違う</p>
-                        <p><strong>HI</strong>:５～９の数字が当てはまる</p>
-                        <p><strong>LOW</strong>:０～４の数字が当てはまる</p>
+                        <p style="font-size: 1.5em;"> <strong> HIT</strong>:数字・桁数が当たっているよ！</p>
+                        <p style="font-size: 1.5em;"><strong>BLOW</strong>:答えにはふくまれてるよ！</p>
+
                     </div>
+                    <p style="font-size: 1.5em;"> 制限時間は <strong>1分</strong> </p>
                 </div>
             </div>
         </div>
+
+        <!-- 説明画面 最初は非表示-->
+        <div id="instruction-screen" class="screen" style="display: none;">
+            <div class="card" style="position: relative;">
+                <button type="button" onclick="closeInstructionToGame()" aria-label="閉じる"
+                    style="position: absolute; top: 0.5em; right: 0.5em; width: 2.25em; height: 2.25em; border: none; border-radius: 50%; background: rgba(0,0,0,0.08); font-size: 1.5em; line-height: 1; cursor: pointer;">×</button>
+                <h1>目指せ３HIT！！</h1>
+                <h2 style="font-size: 1.5em;"> 3桁の数列を解読して、宝箱を開けよう！</h2>
+                </h2>
+                <div class="moji">
+
+                    <!-- ゲームは30秒で終わる -->
+
+
+                    <div class="score-table">
+                        <p style="font-size: 1.5em;"> <strong> HIT</strong>:数字・桁数が当たっているよ！</p>
+                        <p style="font-size: 1.5em;"><strong>BLOW</strong>:答えにはふくまれてるよ！</p>
+
+                    </div>
+                    <p style="font-size: 1.5em;"> 制限時間は <strong>1分</strong> </p>
+                </div>
+            </div>
+        </div>
+        <!-- ここにコードを！ -->
+
     </div>
+
+    <div id="timer"
+        style="position: absolute; top: 1em; right: 1em; font-weight:700; font-size:1.25em; color:#ffffff; text-shadow: 0.08em 0.08em 0.2em rgba(0,0,0,0.8); z-index:999;">
+        残り時間：<span style="font-size:1.8em; line-height:1;">60</span></div>
 
     <!-- ゲーム画面 最初は非表示-->
     <div id="game-screen" class="screen" style="display: none;">
         <!-- Boxes (vertical) and system placed side-by-side -->
-        <div class="boxes">
-            <div class="code1">
-                <p>?</p>
-            </div>
-            <div class="code2">
-                <p>?</p>
-            </div>
-            <div class="code3">
-                <p>?</p>
-            </div>
-        </div>
+        <div
+            style="display: flex; gap: 2.5em; align-items: flex-start; padding: 1.25em; transform: scale(1.1); transform-origin: center center;">
+            <div>
+                <div class="boxes">
+                    <div class="code1">
+                        <p>?</p>
+                    </div>
+                    <div class="code2">
+                        <p>?</p>
+                    </div>
+                    <div class="code3">
+                        <p>?</p>
+                    </div>
+                </div>
 
-        <div class="system">
-            <div class="controls" style="display:flex;align-items:center;gap:8px;">
-                <input id="guess-input" placeholder="3桁(重複なし)" maxlength="3"
-                    style="width:200px;padding:12px;font-size:18px;" />
-                <button id="guess-btn" style="padding:10px 14px;font-size:18px;">判定</button>
-                <div id="timer" style="margin-left:12px;font-weight:700;font-size:18px;">30s</div>
+                <div class="system">
+                    <div class="controls" style="display:flex;align-items:center;gap:0.5em;">
+                        <input id="guess-input" placeholder="3桁(重複なし)" maxlength="3"
+                            style="width:13.8em;padding:0.9em;font-size:1.3em;" />
+                        <button id="guess-btn" style="padding:0.75em 1.05em;font-size:1.3em;">Enter</button>
+                    </div>
+                    <div id="log" style="margin-top:0.85em; max-height:20.5em; overflow:auto; width:26.5em;"></div>
+                    <div id="score" style="margin-top:0.5em;font-weight:700;"></div>
+                </div>
             </div>
-            <div id="log" style="margin-top:12px; max-height:300px; overflow:auto; width:360px;"></div>
-            <div id="score" style="margin-top:8px;font-weight:700;"></div>
+
+            <div id="instruction-screen" class="screen" style="display: flex; font-size: 0.85em;">
+
+
+                <!-- ゲームは30秒で終わる -->
+                <div class="score-table">
+
+                    <p style="font-size: 1.5em;"> <strong>ヒント</strong></p>
+                    <p style="font-size: 1.1em;"> <strong> → LOW</strong>:0~4までの数字</p>
+                    <p style="font-size: 1.1em;"><strong> → HIGH</strong>:5~9までの数字</p>
+                </div>
+            </div>
         </div>
 
         <!-- 成功時のオーバーレイ画像（初期は非表示） -->
@@ -115,10 +158,16 @@
 
     // 説明画面を表示
     function instruction() {
-        startScreen.style.display = "none";
+        startScreen.style.display = "flex";
         instructionScreen.style.display = "flex";
         gameScreen.style.display = "none";
         console.log("[Game] 説明画面を表示");
+    }
+
+    function closeInstructionToGame() {
+        instructionScreen.style.display = "none";
+        startScreen.style.display = "none";
+        gameScreen.style.display = "flex";
     }
 
     // gameStart が呼ばれたらゲームを開始する
@@ -127,8 +176,10 @@
         startScreen.style.display = "none";
         instructionScreen.style.display = "none";
         gameScreen.style.display = "flex";
-        // Hit&Blow の初期化・開始
-        initHitAndBlow();
+        // 進行中はリセットせず、未開始/終了後のみ初期化する
+        if (!isGameActive) {
+            initHitAndBlow();
+        }
         console.log("[Game] ゲーム開始！");
     }
 
@@ -153,6 +204,8 @@
     let timerId = null;
     let lastHits = 0;
     let lastBlows = 0;
+    let isGameActive = false;
+    const chestOpenSound = new Audio('./data/宝箱を開ける.mp3');
 
     function generateSecret() {
         const digits = [];
@@ -166,7 +219,8 @@
     function initHitAndBlow() {
         secret = generateSecret();
         attempts = 0;
-        timeLeft = 30;
+        timeLeft = 60;
+        isGameActive = true;
         if (timerId) clearInterval(timerId);
         if (logEl()) logEl().innerHTML = '';
         if (scoreEl()) scoreEl().textContent = '';
@@ -202,7 +256,9 @@
         }, 1000);
     }
 
-    function updateTimerDisplay() { if (timerEl()) timerEl().textContent = timeLeft + 's'; }
+    function updateTimerDisplay() {
+        if (timerEl()) timerEl().innerHTML = '残り時間：<span style="font-size:1.8em; line-height:1;">' + timeLeft + '</span>';
+    }
 
     function handleGuess() {
         const raw = guessInput().value.trim();
@@ -257,6 +313,7 @@
     function endGame(won) {
         if (guessBtn()) guessBtn().disabled = true;
         if (timerId) clearInterval(timerId);
+        isGameActive = false;
         const pts = gameStop(won);
         if (scoreEl()) scoreEl().textContent = (won ? '正解！ ' : '終了！ ') + '得点: ' + pts.toFixed(1);
     }
@@ -267,6 +324,8 @@
         if (!img) return;
         // 再生のためクラスをリセット
         img.classList.remove('show-success');
+        chestOpenSound.currentTime = 0;
+        chestOpenSound.play().catch(() => { });
         // 表示してアニメーションを再生（アニメ後も表示を維持）
         img.style.display = 'block';
         void img.offsetWidth;
