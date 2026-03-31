@@ -35,32 +35,33 @@
     <!-- 開始画面 最初は表示する-->
     <div id="start-screen" class="screen">
         <!-- ここにコードを！ -->
-　　<div id="instruction-screen" class="screen" style="display: flex;">
-        <div class="card">
-            <h1 style="color: rgb(0, 0, 0);">協力！！キーの役割決めよう！</h1>
-            <h2> 順番に押してポーションを作ろう</h2>
-            <div class="moji">
-                
-                <!-- ゲームは60
+        　　<div id="instruction-screen" class="screen" style="display: flex;">
+            <div class="card">
+                <h1 style="color: rgb(0, 0, 0);">協力！！キーの役割決めよう！</h1>
+                <h2> 順番に押してポーションを作ろう</h2>
+                <div class="moji">
+
+                    <!-- ゲームは60
                  
                 秒で終わる -->
 
-                
-                
-                    <p style="font-size: 1.5em;"> <strong> <span class="fixed-keys">A / D / G / J / L</span> のキーの中から自分の役割を決めてポーションを作ろう</strong></p>
 
-                    
-                    
-                
-               <p style="font-size: 1.5em;"><strong> 制限時間は 60秒 です</strong></p>
+
+                    <p style="font-size: 1.5em;"> <strong> <span class="fixed-keys">A / D / G / J / L</span>
+                            のキーの中から自分の役割を決めてポーションを作ろう</strong></p>
+
+
+
+
+                    <p style="font-size: 1.5em;"><strong> 制限時間は 60秒 です</strong></p>
+                </div>
             </div>
         </div>
     </div>
-    </div>
-    
+
 
     </div>
-    
+
 
     </div>
 
@@ -68,24 +69,24 @@
     <!-- 説明画面 最初は非表示-->
     <div id="instruction-screen" class="screen" style="display: none;">
         <!-- ここにコードを！ -->
-<div id="instruction-screen" class="screen" style="display: flex;">
-        <div class="card">
-            <h2> 薬草を混ぜてポーションを作ろう</h2>
-            <div class="moji">
-                
-                <!-- ゲームは60秒で終わる -->
-               
+        <div id="instruction-screen" class="screen" style="display: flex;">
+            <div class="card">
+                <h2> 薬草を混ぜてポーションを作ろう</h2>
+                <div class="moji">
 
-                   <p> <strong><span class="fixed-keys">A / D / G / J / L</span> のキーの中から自分の役割を決めてポーションを作ろう</strong></p>
+                    <!-- ゲームは60秒で終わる -->
 
-                     
-                
-                 <p><strong> 制限時間は 60秒 </strong></p>
+
+                    <p> <strong><span class="fixed-keys">A / D / G / J / L</span> のキーの中から自分の役割を決めてポーションを作ろう</strong></p>
+
+
+
+                    <p><strong> 制限時間は 60秒 </strong></p>
+                </div>
             </div>
         </div>
     </div>
-    </div>
-    
+
 
     </div>
     <!-- ゲーム画面 最初は非表示-->
@@ -107,6 +108,7 @@
         width: 33.33%;
         font-size: 24px;
     }
+
     #countdown {
         position: absolute;
         top: 20px;
@@ -117,6 +119,7 @@
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         z-index: 999;
     }
+
     #keys {
         position: absolute;
         /* 画面中央よりやや上に配置 */
@@ -125,7 +128,7 @@
         width: 33.33%;
         font-size: 24px;
     }
-       
+
     #keys {
         position: absolute;
         /* 真ん中上に表示 */
@@ -146,6 +149,7 @@
         align-content: flex-start;
         flex-wrap: wrap;
     }
+
     .key-circle {
         width: 80px;
         height: 80px;
@@ -172,9 +176,17 @@
     }
 
     @keyframes pulseNextKey {
-        0% { transform: scale(1.1); }
-        50% { transform: scale(1.18); }
-        100% { transform: scale(1.1); }
+        0% {
+            transform: scale(1.1);
+        }
+
+        50% {
+            transform: scale(1.18);
+        }
+
+        100% {
+            transform: scale(1.1);
+        }
     }
 
     .fixed-keys {
@@ -262,7 +274,7 @@
                 scoreDisplay.textContent = 'スコア: ' + score;
                 updatePotions();
                 successSound.currentTime = 0;
-                successSound.play().catch(() => {});
+                successSound.play().catch(() => { });
                 generateKeys();
             }
         } else {
@@ -270,7 +282,7 @@
             keyIndex = 0;
             updateKeysDisplay();
             wrongAnswerSound.currentTime = 0;
-            wrongAnswerSound.play().catch(() => {});
+            wrongAnswerSound.play().catch(() => { });
         }
     }
 
@@ -341,6 +353,7 @@
 <!-- サーバーとの通信用 -->
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <!-- いろいろな設定用 -->
-<script src="https://we2026_statics.sawayuki.com/control.js" defer></script>
+<script src="https://we2026b2.sawayuki.com/control.js" defer></script>
+
 
 </html>
