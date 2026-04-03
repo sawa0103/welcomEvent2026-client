@@ -491,7 +491,6 @@
         return Math.min(score, 100);
       }
 
-      /* ===== ゲーム定数 ===== */
       const ROWS = 6; // ゲーム画面のレーン数
       const PORTS = 8; // ビーム発射ポート数
       const KEY_LABELS = [
@@ -534,6 +533,8 @@
       ]; // 使用可能なキーラベルのプール
       let activeKeyLabels = [];
       const COOLDOWN = 2000; // ビーム発射のクールタイム（ミリ秒）
+      const MAX_ENEMIES = 10; // 画面上の敵の最大数（パフォーマンス最適化）
+      const MAX_BEAMS = 20; // 画面上のビームの最大数（パフォーマンス最適化）
 
       /* ===== ゲーム状態管理 ===== */
       let lastShotTime = {}; // 各ポートの最後の発射時刻（ポート番号→タイムスタンプ）
@@ -564,6 +565,21 @@
         const keys = [...KEY_LABELS];
         shuffleArray(keys);
         return keys.slice(0, PORTS);
+      }
+
+      /**
+       * 1 ポート分だけランダムなキーを取得する
+       * @param {number} portIndex
+       * @returns {string}
+       */
+      function getRandomReplacementKey(portIndex) {
+        const currentLabel = activeKeyLabels[portIndex];
+        const usedLabels = new Set(activeKeyLabels);
+        usedLabels.delete(currentLabel);
+        const candidates = KEY_LABELS.filter(
+          (key) => !usedLabels.has(key) && key !== currentLabel,
+        );
+        return candidates[Math.floor(Math.random() * candidates.length)];
       }
 
       /**
@@ -831,6 +847,9 @@
         // クールタイム中なら発射できない
         if (now - lastShotTime[port] < COOLDOWN) return;
 
+        // ビームの数が最大数を超えたら発射しない（パフォーマンス最適化）
+        if (beams.length >= MAX_BEAMS) return;
+
         // 最後の発射時刻を記録
         lastShotTime[port] = now;
 
@@ -911,8 +930,8 @@
           life: 130, // 生存時間（ミリ秒相当）
         });
 
-        // 1回押すごとにポートのキー割り当てをランダムに変更する
-        activeKeyLabels = getRandomPortKeys();
+        // 発射したポートだけ新しいキーに変更する
+        activeKeyLabels[port] = getRandomReplacementKey(port);
         updatePortLabels();
       }
 
@@ -924,6 +943,9 @@
        * 速い的はより濃い色で描画されて視覚的な危険信号を与える
        */
       function spawnEnemy() {
+        // 敵の数が最大数を超えたら生成しない（パフォーマンス最適化）
+        if (enemies.length >= MAX_ENEMIES) return;
+
         // ランダムなレーンを選択（0〜ROWS-1）
         const lane = Math.floor(Math.random() * ROWS);
 
