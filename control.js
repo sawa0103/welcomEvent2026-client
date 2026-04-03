@@ -29,6 +29,32 @@
     // URLパラメータ ?debug=false で強制的に本番モードにもできる
     const Production_environment =
         urlParams.get("debug") === "false" ? true : false;
+
+    function runGameStop(options = {}) {
+        const { suppressAlert = false } = options;
+
+        if (typeof window.gameStop !== "function") {
+            console.warn("[control.js] gameStop()が定義されていません");
+            return null;
+        }
+
+        if (!suppressAlert) {
+            return window.gameStop();
+        }
+
+        const originalAlert = window.alert;
+        try {
+            window.alert = (...args) => {
+                console.warn(
+                    "[control.js] 本番モードのため gameStop() 内の alert を抑止しました:",
+                    ...args
+                );
+            };
+            return window.gameStop();
+        } finally {
+            window.alert = originalAlert;
+        }
+    }
     // =====================================================
     // デバッグ用ボタン生成 (Production_environmentがfalseの場合のみ)
     // =====================================================
@@ -106,15 +132,13 @@
             buttonStyle +
             `background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); color: white;`;
         stopBtn.addEventListener("click", () => {
-            if (typeof window.gameStop === "function") {
-                const score = window.gameStop();
+            const score = runGameStop({ suppressAlert: false });
+            if (score !== null) {
                 const clampedScore = Math.min(
                     Math.max(Number(score) || 0, 0),
                     100
                 );
                 alert(`今回の点数: ${clampedScore}点`);
-            } else {
-                console.warn("[control.js] gameStop() が定義されていません");
             }
         });
         stopBtn.addEventListener("mouseenter", () => {
@@ -184,8 +208,10 @@
         // ゲーム終了
         socket.on("finishEvent", (data) => {
             console.log("[control.js] finishEvent received");
-            if (typeof window.gameStop === "function") {
-                const score = window.gameStop();
+            const score = runGameStop({
+                suppressAlert: Production_environment,
+            });
+            if (score !== null) {
                 console.log("[control.js] ゲーム終了 スコア:", score);
 
                 // スコアをサーバーに送信
@@ -198,13 +224,7 @@
                         group_name: window._controlGroupName || "",
                         point: clampedScore,
                     });
-                    // スコアをalertで表示
-                    if(Production_environment) {
-                        alert(`スコア: ${clampedScore}点`);
-                    }   
                 }
-            } else {
-                console.warn("[control.js] gameStop()が定義されていません");
             }
         });
 

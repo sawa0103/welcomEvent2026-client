@@ -10,9 +10,18 @@ font-family: fantasy;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     max-width: 500px;
 }
-.score-table {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    padding: 15px;
-    border-radius: 10px;
-    margin-top: 15px;
+
+#potions {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+#potions img {
+    width: 80px;
+    height: 80px;
+    margin: 5px;
 }
